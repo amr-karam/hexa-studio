@@ -1,0 +1,720 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HEXA Studio · Spaces That Live</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Geist:wght@300;400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e14;
+    --bg-warm: #14120e;
+    --text: #c8d6e5;
+    --text-dim: #5a6a7a;
+    --accent: #00ff88;
+    --accent-dim: #00aa55;
+    --accent-warm: #ffaa33;
+    --scar: #ff3366;
+    --echo: #7eb8a0;
+    --time-dawn: #ff8844;
+    --time-noon: #00ff88;
+    --time-dusk: #aa44ff;
+    --time-night: #3366ff;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    height: 100%; overflow: hidden;
+    background: var(--bg); color: var(--text);
+    font-family: 'Geist', sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Grain */
+  #grain {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    z-index: 5; pointer-events: none; opacity: 0.03;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    background-size: 256px 256px;
+  }
+
+  /* Vignette */
+  #vignette {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    z-index: 4; pointer-events: none;
+    background: radial-gradient(ellipse at center, transparent 30%, rgba(10,14,20,0.6) 100%);
+  }
+
+  /* === TEMPORAL SCROLL === */
+  #scrollCapture {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    overflow-y: scroll; z-index: 1; scrollbar-width: none;
+  }
+  #scrollCapture::-webkit-scrollbar { display: none; }
+  #scrollContent { height: 1000vh; }
+
+  /* === STAGE === */
+  #stage {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    z-index: 2; pointer-events: none;
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+  }
+
+  /* Time display */
+  #timeDisplay {
+    position: fixed; top: 24px; left: 24px; z-index: 10;
+    font-family: 'Geist Mono', monospace; font-size: 13px;
+    color: var(--accent); opacity: 0.6; letter-spacing: 0.1em;
+  }
+
+  /* Timeline */
+  #timeline {
+    position: fixed; right: 24px; top: 50%; transform: translateY(-50%);
+    z-index: 10; width: 2px; height: 50vh;
+    background: rgba(255,255,255,0.05); border-radius: 1px;
+  }
+  #timelineFill {
+    position: absolute; top: 0; left: 0; width: 100%; height: 0%;
+    background: linear-gradient(to bottom, var(--time-dawn), var(--time-noon), var(--time-dusk), var(--time-night));
+    border-radius: 1px; transition: height 0.1s linear;
+  }
+  #timelineMarker {
+    position: absolute; left: -4px; width: 10px; height: 10px;
+    background: var(--accent); border-radius: 50%;
+    transform: translateY(-50%); transition: top 0.1s linear;
+    box-shadow: 0 0 8px var(--accent);
+  }
+  #timelineLabel {
+    position: fixed; right: 36px; top: 50%; transform: translateY(-50%);
+    z-index: 10; font-size: 9px; letter-spacing: 0.2em;
+    text-transform: uppercase; color: var(--text-dim);
+    writing-mode: vertical-rl; text-orientation: mixed;
+  }
+
+  /* === LIVING ORGANISM (center) === */
+  #organism {
+    position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    z-index: 3; pointer-events: none;
+  }
+  #organismCanvas { display: block; }
+
+  /* === ECHO CHAMBER === */
+  #echoChamber {
+    position: fixed; bottom: 120px; left: 50%; transform: translateX(-50%);
+    z-index: 10; width: 90%; max-width: 600px;
+    height: 200px; pointer-events: none;
+  }
+  .echo {
+    position: absolute; top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-family: 'Instrument Serif', serif;
+    font-weight: 300; font-size: 16px;
+    text-align: center; line-height: 1.6;
+    max-width: 520px; white-space: pre-wrap;
+    opacity: 0; transition: opacity 1.5s ease, transform 1.5s ease, filter 1.5s ease;
+    pointer-events: none;
+  }
+  .echo.visible { opacity: 1; }
+  .echo.fading { opacity: 0; transform: translate(-50%, -50%) scale(0.95); filter: blur(2px); }
+  .echo.layer-0 { color: var(--echo); font-size: 18px; z-index: 4; }
+  .echo.layer-1 { color: rgba(126,184,160,0.6); font-size: 15px; z-index: 3; transform: translate(-50%, -50%) translateY(10px); }
+  .echo.layer-2 { color: rgba(126,184,160,0.3); font-size: 13px; z-index: 2; transform: translate(-50%, -50%) translateY(20px); }
+
+  /* === BETWEEN CONTENT === */
+  #betweenContent {
+    position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+    z-index: 6; pointer-events: none;
+    text-align: center; opacity: 0; transition: opacity 1s ease;
+  }
+  #betweenContent.show { opacity: 1; }
+  #betweenContent .between-text {
+    font-family: 'Instrument Serif', serif; font-style: italic;
+    font-size: 20px; color: var(--text-dim); line-height: 1.6;
+    max-width: 400px;
+  }
+
+  /* === HUD === */
+  #hud {
+    position: fixed; top: 24px; right: 60px; z-index: 10;
+    font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase;
+    color: var(--text-dim); font-family: 'Geist Mono', monospace;
+    line-height: 2; text-align: right;
+  }
+  #hud .val { color: var(--accent-dim); }
+
+  /* === INPUT === */
+  #inputArea {
+    position: fixed; bottom: 40px; left: 50%; transform: translateX(-50%);
+    z-index: 10; width: 90%; max-width: 500px;
+  }
+  #inputArea input {
+    width: 100%; background: rgba(10,14,20,0.8); backdrop-filter: blur(8px);
+    border: 1px solid rgba(0,255,136,0.15); border-radius: 8px;
+    padding: 14px 20px; color: var(--text);
+    font-family: 'Geist', sans-serif; font-size: 14px;
+    outline: none; transition: border-color 0.3s;
+  }
+  #inputArea input:focus { border-color: rgba(0,255,136,0.4); }
+  #inputArea input::placeholder { color: var(--text-dim); }
+  #inputArea .hint {
+    text-align: center; font-size: 9px; color: var(--text-dim);
+    letter-spacing: 0.2em; text-transform: uppercase;
+    margin-top: 8px;
+  }
+
+  /* === INTRO === */
+  #intro {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    z-index: 50; background: var(--bg);
+    display: flex; flex-direction: column;
+    align-items: center; justify-content: center;
+    transition: opacity 2s ease;
+  }
+  #intro.fade { opacity: 0; pointer-events: none; }
+  #intro h1 {
+    font-family: 'Instrument Serif', serif;
+    font-weight: 300; font-size: clamp(48px, 8vw, 96px);
+    letter-spacing: -0.03em; line-height: 1;
+    color: var(--text);
+    opacity: 0; animation: fadeIn 2s ease 0.5s forwards;
+  }
+  #intro h1 em { font-style: italic; color: var(--accent); }
+  #intro .sub {
+    font-size: 12px; color: var(--text-dim);
+    letter-spacing: 0.2em; text-transform: uppercase;
+    margin-top: 24px; max-width: 500px; text-align: center;
+    line-height: 1.8;
+    opacity: 0; animation: fadeIn 2s ease 1.5s forwards;
+  }
+  #intro .hint {
+    position: absolute; bottom: 48px;
+    font-size: 10px; color: var(--text-dim);
+    letter-spacing: 0.15em; text-transform: uppercase;
+    opacity: 0; animation: fadeIn 2s ease 3s forwards, pulse 3s ease 5s infinite;
+  }
+  @keyframes fadeIn { to { opacity: 1; } }
+  @keyframes pulse { 0%, 100% { opacity: 0.4; } 50% { opacity: 0.8; } }
+
+  /* === SPACE CARDS (Garden concept) === */
+  .space-card {
+    position: fixed; z-index: 8; pointer-events: none;
+    background: rgba(10,14,20,0.7); backdrop-filter: blur(8px);
+    border: 1px solid rgba(0,255,136,0.15); border-radius: 8px;
+    padding: 12px 16px; font-size: 11px;
+    max-width: 200px; opacity: 0;
+    transition: opacity 0.5s ease, transform 0.5s ease;
+  }
+  .space-card.show { opacity: 1; }
+  .space-card .card-title {
+    color: var(--accent); font-weight: 500; margin-bottom: 4px;
+    font-size: 12px; letter-spacing: 0.05em;
+  }
+  .space-card .card-desc {
+    color: var(--text-dim); font-size: 10px; line-height: 1.5;
+  }
+
+  /* === MOBILE === */
+  @media (max-width: 768px) {
+    #timeDisplay { font-size: 11px; top: 16px; left: 16px; }
+    #timeline { right: 12px; height: 40vh; }
+    #timelineLabel { right: 24px; font-size: 8px; }
+    #hud { right: 24px; font-size: 8px; }
+    .echo { font-size: 14px; max-width: 300px; }
+    .echo.layer-0 { font-size: 15px; }
+    #echoChamber { height: 150px; bottom: 100px; }
+    #inputArea { bottom: 30px; width: 95%; }
+    #organismCanvas { width: 200px; height: 200px; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    #intro h1, #intro .sub, #intro .hint { animation: none; opacity: 1; }
+    .echo { transition: none; }
+    .space-card { transition: none; }
+  }
+</style>
+</head>
+<body>
+<div id="grain"></div>
+<div id="vignette"></div>
+
+<!-- TEMPORAL SCROLL -->
+<div id="scrollCapture">
+  <div id="scrollContent"></div>
+</div>
+
+<!-- STAGE -->
+<div id="stage">
+  <canvas id="organismCanvas" width="300" height="300"></canvas>
+</div>
+
+<!-- TIME DISPLAY -->
+<div id="timeDisplay">00:00</div>
+
+<!-- TIMELINE -->
+<div id="timeline">
+  <div id="timelineFill"></div>
+  <div id="timelineMarker"></div>
+</div>
+<div id="timelineLabel">dawn</div>
+
+<!-- HUD -->
+<div id="hud">
+  <div>energy <span class="val" id="energyVal">100</span></div>
+  <div>echoes <span class="val" id="echoVal">0</span></div>
+  <div>memory <span class="val" id="memVal">0</span></div>
+  <div>scars <span class="val" id="scarVal">0</span></div>
+</div>
+
+<!-- BETWEEN CONTENT -->
+<div id="betweenContent">
+  <p class="between-text" id="betweenText"></p>
+</div>
+
+<!-- ECHO CHAMBER -->
+<div id="echoChamber"></div>
+
+<!-- SPACE CARDS (Garden) -->
+<div id="spaceCards"></div>
+
+<!-- INPUT -->
+<div id="inputArea">
+  <input type="text" id="input" placeholder="speak to the space..." autocomplete="off">
+  <div class="hint">HEXA Studio · Spaces that live, remember, and grow</div>
+</div>
+
+<!-- INTRO -->
+<div id="intro">
+  <h1>HEXA <em>Studio</em></h1>
+  <p class="sub">Spaces that live, remember, and grow. A new kind of architectural experience.</p>
+  <p class="hint">Scroll to begin. Type to speak. Pause to listen.</p>
+</div>
+
+<script>
+// ============================================================
+// HEXA STUDIO · SPACES THAT LIVE
+// A fusion of 7 novel web concepts:
+// 1. Temporal — scroll through time, not space
+// 2. Living Page — digital organism with DNA & metabolism
+// 3. Echo — site develops a voice from accumulated echoes
+// 4. Between — content appears in gaps between actions
+// 5. Still — attention-based interaction
+// 6. Forget — degradation as feature (visits leave traces)
+// 7. Garden — spatial relationships as programming
+// ============================================================
+
+const STORAGE_KEY = 'hexa_spaces_live';
+
+// --- STATE ---
+const saved = JSON.parse(localStorage.getItem(STORAGE_KEY) || 'null');
+const state = saved || {
+  dna: generateDNA(),
+  born: Date.now(),
+  energy: 100,
+  echoes: [],
+  vocabulary: [],
+  visitors: 1,
+  scars: 0,
+  trace: [],
+  lastVisit: Date.now(),
+  mood: 'neutral'
+};
+if (saved) {
+  state.visitors++;
+  const away = (Date.now() - (state.lastVisit || Date.now())) / 3600000;
+  state.energy = Math.max(10, state.energy - away * 1);
+  state.lastVisit = Date.now();
+}
+
+function generateDNA() {
+  const chars = 'ACGT';
+  let dna = '';
+  for (let i = 0; i < 16; i++) dna += chars[Math.floor(Math.random() * 4)];
+  return dna;
+}
+
+// --- ORGANISM ---
+const canvas = document.getElementById('organismCanvas');
+const ctx = canvas.getContext('2d');
+let time = 0;
+let particles = [];
+let ripples = [];
+
+function drawOrganism() {
+  time += 0.016;
+  const w = canvas.width, h = canvas.height;
+  ctx.clearRect(0, 0, w, h);
+  
+  const cx = w/2, cy = h/2;
+  const energy = state.energy / 100;
+  const pulse = Math.sin(time * 2) * 0.1 + 1;
+  const radius = 30 + energy * 50 + Math.sin(time * 0.5) * 5;
+  
+  // Particles
+  if (Math.random() < energy * 0.2) {
+    const angle = Math.random() * Math.PI * 2;
+    particles.push({
+      x: cx + Math.cos(angle) * (radius + 10),
+      y: cy + Math.sin(angle) * (radius + 10),
+      vx: Math.cos(angle) * (1 + Math.random()),
+      vy: Math.sin(angle) * (1 + Math.random()),
+      life: 1
+    });
+  }
+  particles = particles.filter(p => p.life > 0);
+  particles.forEach(p => {
+    p.x += p.vx; p.y += p.vy; p.life -= 0.015;
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, 1.5, 0, Math.PI * 2);
+    ctx.fillStyle = `rgba(0,255,136,${p.life * 0.5})`;
+    ctx.fill();
+  });
+  
+  // Ripples
+  ripples = ripples.filter(r => r.life > 0);
+  ripples.forEach(r => {
+    r.life -= 0.02; r.r += 2;
+    ctx.beginPath();
+    ctx.arc(r.x, r.y, r.r, 0, Math.PI * 2);
+    ctx.strokeStyle = `rgba(0,255,136,${r.life * 0.4})`;
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  });
+  
+  // Body
+  const n = 8 + Math.floor(energy * 8);
+  ctx.beginPath();
+  for (let i = 0; i <= n; i++) {
+    const a = (i / n) * Math.PI * 2;
+    const wobble = Math.sin(a * 3 + time * 1.5) * 6 + Math.sin(a * 5 + time * 0.7) * 3;
+    const r = radius * pulse + wobble;
+    const x = cx + Math.cos(a) * r;
+    const y = cy + Math.sin(a) * r;
+    if (i === 0) ctx.moveTo(x, y); else ctx.lineTo(x, y);
+  }
+  ctx.closePath();
+  
+  const grad = ctx.createRadialGradient(cx, cy, 0, cx, cy, radius * 1.5);
+  grad.addColorStop(0, `rgba(0,255,136,${0.15 + energy * 0.25})`);
+  grad.addColorStop(0.5, `rgba(0,170,85,${0.08 + energy * 0.15})`);
+  grad.addColorStop(1, 'rgba(0,0,0,0)');
+  ctx.fillStyle = grad;
+  ctx.fill();
+  ctx.strokeStyle = `rgba(0,255,136,${0.3 + energy * 0.5})`;
+  ctx.lineWidth = 1.5;
+  ctx.stroke();
+  
+  // Core
+  ctx.beginPath();
+  ctx.arc(cx, cy, 6 + energy * 5, 0, Math.PI * 2);
+  ctx.fillStyle = `rgba(0,255,136,${0.6 + energy * 0.4})`;
+  ctx.shadowColor = '#00ff88';
+  ctx.shadowBlur = 15 + energy * 20;
+  ctx.fill();
+  ctx.shadowBlur = 0;
+  
+  // DNA ring
+  ctx.font = '8px Geist Mono';
+  ctx.fillStyle = 'rgba(0,255,136,0.35)';
+  ctx.textAlign = 'center';
+  for (let i = 0; i < state.dna.length; i++) {
+    const a = (i / state.dna.length) * Math.PI * 2 + time * 0.3;
+    const r = radius + 14;
+    ctx.fillText(state.dna[i], cx + Math.cos(a) * r, cy + Math.sin(a) * r);
+  }
+  
+  requestAnimationFrame(drawOrganism);
+}
+
+// --- TEMPORAL SCROLL ---
+const scrollCapture = document.getElementById('scrollCapture');
+const timeDisplay = document.getElementById('timeDisplay');
+const timelineFill = document.getElementById('timelineFill');
+const timelineMarker = document.getElementById('timelineMarker');
+const timelineLabel = document.getElementById('timelineLabel');
+const betweenContent = document.getElementById('betweenContent');
+const betweenText = document.getElementById('betweenText');
+
+const MOMENTS = [
+  { time: '00:00', label: 'dawn', title: 'HEXA Studio', text: 'Every space begins as a vision. Before walls, before light, before form — there is only the idea.', color: '#ff8844' },
+  { time: '03:00', label: 'early', title: 'Concept', text: 'We translate architectural concepts into compelling visual experiences. Photoreal. Cinematic. Precise.', color: '#ffaa33' },
+  { time: '06:00', label: 'morning', title: 'Design', text: 'Every project we visualize begins with understanding the space — its proportions, its light, its purpose.', color: '#ffcc44' },
+  { time: '09:00', label: 'mid-morning', title: 'Modeling', text: 'The floor plan is not a picture. It is the real model, cut and viewed from above. The drawing and the building are the same thing.', color: '#88ff44' },
+  { time: '12:00', label: 'noon', title: 'Materials', text: 'Real materials sweep across each room. Concrete, glass, travertine, larch — each surface tells a story.', color: '#00ff88' },
+  { time: '15:00', label: 'afternoon', title: 'Light', text: 'Late afternoon light fills the space. Big rooms, real furniture, warm tones. It should feel like a house that costs millions.', color: '#44ffaa' },
+  { time: '18:00', label: 'dusk', title: 'Walkthrough', text: 'The camera travels deep into the space, room after room. It does not orbit from outside. It walks through.', color: '#44aaff' },
+  { time: '21:00', label: 'evening', title: 'Experience', text: 'Each room stays a line drawing until the camera reaches it. Then real materials sweep across. The space comes alive.', color: '#8844ff' },
+  { time: '24:00', label: 'night', title: 'HEXA Studio', text: 'Spaces that live, remember, and grow. This is the experience we create.', color: '#aa44ff' },
+];
+
+let currentMoment = 0;
+
+function applyMoment(index) {
+  if (index === currentMoment) return;
+  currentMoment = index;
+  const m = MOMENTS[index];
+  
+  timeDisplay.textContent = m.time;
+  timeDisplay.style.color = m.color;
+  timelineLabel.textContent = m.label;
+  timelineLabel.style.color = m.color;
+  
+  // Update between content
+  betweenText.textContent = m.text;
+  betweenContent.classList.add('show');
+  setTimeout(() => betweenContent.classList.remove('show'), 3000);
+  
+  // Feed organism energy
+  state.energy = Math.min(100, state.energy + 5);
+  ripples.push({ x: canvas.width/2, y: canvas.height/2, r: 20, life: 1 });
+  
+  // Create echo
+  createEcho(m.title + ': ' + m.text.substring(0, 40) + '...', 0);
+  
+  updateHUD();
+  saveState();
+}
+
+function updateTimeline(progress) {
+  timelineFill.style.height = (progress * 100) + '%';
+  timelineMarker.style.top = (progress * 100) + '%';
+}
+
+scrollCapture.addEventListener('scroll', () => {
+  const maxScroll = scrollCapture.scrollHeight - scrollCapture.clientHeight;
+  const progress = maxScroll > 0 ? scrollCapture.scrollTop / maxScroll : 0;
+  updateTimeline(progress);
+  
+  const index = Math.min(MOMENTS.length - 1, Math.floor(progress * MOMENTS.length));
+  applyMoment(index);
+  
+  // Between content: show when scrolling stops
+  clearTimeout(window._betweenTimer);
+  window._betweenTimer = setTimeout(() => {
+    if (progress > 0.05 && progress < 0.95) {
+      betweenText.textContent = MOMENTS[index].text;
+      betweenContent.classList.add('show');
+    }
+  }, 500);
+});
+
+// --- ECHO SYSTEM ---
+const echoChamber = document.getElementById('echoChamber');
+const input = document.getElementById('input');
+
+function createEcho(text, layer) {
+  const echo = document.createElement('div');
+  echo.className = `echo layer-${layer}`;
+  echo.textContent = text;
+  echoChamber.appendChild(echo);
+  setTimeout(() => echo.classList.add('visible'), 50);
+  
+  const fadeTime = 6000 + layer * 2000;
+  setTimeout(() => {
+    echo.classList.add('fading');
+    setTimeout(() => { if (echo.parentNode) echo.parentNode.removeChild(echo); }, 1500);
+  }, fadeTime);
+  
+  return echo;
+}
+
+const TRANSFORMS = [
+  (text) => text.split(' ').reverse().join(' '),
+  (text) => text.split(' ').map(w => w.length > 3 ? w.slice(0, -1) + w.slice(-1).toUpperCase() : w).join(' '),
+  (text) => text.split(' ').map((w, i) => i % 2 === 0 ? w : w.split('').reverse().join('')).join(' '),
+];
+
+function transform(text) {
+  return TRANSFORMS[Math.floor(Math.random() * TRANSFORMS.length)](text);
+}
+
+function processInput(text) {
+  if (!text.trim()) return;
+  
+  text.split(' ').forEach(w => { if (w.length > 2) state.vocabulary.push(w.toLowerCase()); });
+  state.vocabulary = [...new Set(state.vocabulary)];
+  
+  createEcho(text, 0);
+  state.echoes.push({ text, time: Date.now() });
+  
+  // Transformed echoes
+  setTimeout(() => { createEcho(transform(text), 1); }, 800);
+  setTimeout(() => { createEcho(transform(text).split(' ').slice(0, 4).join(' ') + '...', 2); }, 1600);
+  
+  // Synthesis if memory deep
+  if (state.vocabulary.length > 8 && Math.random() < 0.3) {
+    setTimeout(() => {
+      const words = state.vocabulary;
+      const synthesis = [];
+      for (let i = 0; i < 3; i++) synthesis.push(words[Math.floor(Math.random() * words.length)]);
+      createEcho(synthesis.join(' ') + ' — ' + text.split(' ')[0] + '.', 1);
+    }, 2400);
+  }
+  
+  state.energy = Math.min(100, state.energy + 10);
+  ripples.push({ x: canvas.width/2, y: canvas.height/2, r: 15, life: 1 });
+  updateHUD();
+  saveState();
+}
+
+input.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && input.value.trim()) {
+    processInput(input.value.trim());
+    input.value = '';
+  }
+});
+
+// --- BETWEEN (content in gaps) ---
+const BETWEEN_TEXTS = [
+  'The space between two rooms is where architecture lives.',
+  'Every gap is an opportunity.',
+  'What you don\'t build matters as much as what you do.',
+  'Silence in a space is not emptiness — it is potential.',
+  'The best rooms are the ones you haven\'t entered yet.',
+];
+
+let lastActivity = Date.now();
+let betweenTimer = null;
+
+function resetBetween() {
+  lastActivity = Date.now();
+  betweenContent.classList.remove('show');
+  clearTimeout(betweenTimer);
+  betweenTimer = setTimeout(() => {
+    const gap = Date.now() - lastActivity;
+    if (gap > 3000) {
+      betweenText.textContent = BETWEEN_TEXTS[Math.floor(Math.random() * BETWEEN_TEXTS.length)];
+      betweenContent.classList.add('show');
+      setTimeout(() => betweenContent.classList.remove('show'), 4000);
+    }
+  }, 4000);
+}
+
+['mousemove', 'keydown', 'scroll', 'touchstart'].forEach(evt => {
+  document.addEventListener(evt, resetBetween, { passive: true });
+});
+
+// --- STILL (attention-based) ---
+let speed = 0;
+let lastPos = { x: 0, y: 0, t: Date.now() };
+
+document.addEventListener('mousemove', (e) => {
+  const now = Date.now();
+  const dx = e.clientX - lastPos.x;
+  const dy = e.clientY - lastPos.y;
+  const dt = now - lastPos.t;
+  if (dt > 0) speed = Math.sqrt(dx*dx + dy*dy) / dt;
+  lastPos = { x: e.clientX, y: e.clientY, t: now };
+});
+
+// --- SPACE CARDS (Garden concept) ---
+const spaceCards = document.getElementById('spaceCards');
+const SPACES = [
+  { title: 'Media Room', desc: 'Entry zone. First impression. Where the story begins.', x: '15%', y: '20%' },
+  { title: 'Kitchen & Dining', desc: 'Heart of the home. Skylights above. Open plan.', x: '70%', y: '15%' },
+  { title: 'Wine Cellar', desc: 'Intimate. Controlled climate. Private collection.', x: '85%', y: '35%' },
+  { title: 'Library', desc: 'Quiet contemplation. SubSize .42. Floor-to-ceiling.', x: '10%', y: '50%' },
+  { title: 'Living Room', desc: 'h 4.5m. Clerestory light. The main gathering space.', x: '50%', y: '45%' },
+  { title: 'Master Suite', desc: 'Larch walls. Travertine floor. Private garden beyond.', x: '30%', y: '75%' },
+  { title: 'Glass Gallery', desc: 'Rotated 90°. Travertine floor. Art in transition.', x: '75%', y: '70%' },
+];
+
+function showSpaceCards() {
+  spaceCards.innerHTML = '';
+  SPACES.forEach((s, i) => {
+    const card = document.createElement('div');
+    card.className = 'space-card';
+    card.style.left = s.x;
+    card.style.top = s.y;
+    const titleEl = document.createElement('div');
+    titleEl.className = 'card-title';
+    titleEl.textContent = s.title;
+    const descEl = document.createElement('div');
+    descEl.className = 'card-desc';
+    descEl.textContent = s.desc;
+    card.appendChild(titleEl);
+    card.appendChild(descEl);
+    spaceCards.appendChild(card);
+    setTimeout(() => card.classList.add('show'), 200 + i * 150);
+  });
+}
+
+function hideSpaceCards() {
+  document.querySelectorAll('.space-card').forEach(c => c.classList.remove('show'));
+  setTimeout(() => { spaceCards.innerHTML = ''; }, 500);
+}
+
+// Show space cards when organism energy is high
+setInterval(() => {
+  if (state.energy > 60 && Math.random() < 0.3) {
+    showSpaceCards();
+    setTimeout(hideSpaceCards, 5000);
+  }
+}, 8000);
+
+// --- FORGET (degradation) ---
+// Visits leave traces — handled by state persistence
+// Energy decays when away — handled in state loading
+
+// --- METABOLISM ---
+function tick() {
+  state.energy = Math.max(5, state.energy - 0.03);
+  state.mood = state.energy > 70 ? 'thriving' : state.energy > 40 ? 'content' : state.energy > 20 ? 'hungry' : 'dying';
+  updateHUD();
+  saveState();
+}
+setInterval(tick, 1000);
+
+// --- HUD ---
+function updateHUD() {
+  document.getElementById('energyVal').textContent = Math.round(state.energy);
+  document.getElementById('echoVal').textContent = state.echoes.length;
+  document.getElementById('memVal').textContent = state.vocabulary.length;
+  document.getElementById('scarVal').textContent = state.scars;
+}
+
+// --- INTRO ---
+function dismissIntro() {
+  document.getElementById('intro').classList.add('fade');
+  setTimeout(() => {
+    document.getElementById('intro').style.display = 'none';
+  }, 2000);
+}
+document.getElementById('intro').addEventListener('click', dismissIntro);
+document.getElementById('intro').addEventListener('touchstart', (e) => {
+  e.preventDefault(); dismissIntro();
+}, { passive: false });
+setTimeout(dismissIntro, 6000);
+
+// --- PERSISTENCE ---
+function saveState() {
+  state.lastVisit = Date.now();
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch(e) {}
+}
+setInterval(saveState, 5000);
+window.addEventListener('beforeunload', saveState);
+
+// --- RETURNING VISITOR ---
+if (saved) {
+  setTimeout(() => {
+    createEcho('Welcome back. The space remembers you.', 0);
+  }, 2000);
+}
+
+// --- INIT ---
+updateHUD();
+drawOrganism();
+resetBetween();
+
+// Auto-scroll hint
+setTimeout(() => {
+  if (scrollCapture.scrollTop < 100) {
+    scrollCapture.scrollTo({ top: 200, behavior: 'smooth' });
+  }
+}, 8000);
+</script>
+</body>
+</html>

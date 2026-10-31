@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>HEXA Studio · Sequential Spaces</title>
+<meta name="theme-color" content="#0a0a14"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#0a0a14;--fg:#f0f2ff;--fg-dim:rgba(240,242,255,.7);
+  --accent:#792efc;--accent2:#3cb4f0;--line:rgba(240,242,255,.12);
+  --display:'Archivo',sans-serif;--body:'Space+Grotesk',sans-serif;--label:'Space+Grotesk',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--fg);font-family:var(--body);overflow-x:hidden}
+
+/* Each section = one video + text */
+.section{position:relative;height:100vh;overflow:hidden}
+.section video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(.6) saturate(1.15);transform:scale(1.05)}
+.section::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,rgba(10,10,20,.85)0%,rgba(10,10,20,.3)50%,rgba(10,10,20,.85)100%);pointer-events:none}
+.section__c{position:relative;z-index:2;height:100%;display:flex;flex-direction:column;justify-content:center;padding:0 8vw;max-width:640px}
+.section .kicker{font:500 11px/1 var(--label);letter-spacing:.4em;text-transform:uppercase;color:var(--accent);margin-bottom:20px}
+.section h2{font-family:var(--display);font-size:clamp(48px,6vw,88px);font-weight:700;letter-spacing:-.03em;line-height:1;margin-bottom:20px}
+.section h2 em{font-style:italic;font-weight:300;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.section p{color:var(--fg-dim);font-size:16px;line-height:1.7;max-width:440px;font-weight:300;margin-bottom:20px}
+.section .meta{font:500 10px/1 var(--label);letter-spacing:.2em;text-transform:uppercase;color:var(--fg-dim);display:flex;gap:24px}
+.section .meta span{position:relative;padding-inline-start:16px}
+.section .meta span::before{content:'';position:absolute;left:0;top:50%;width:8px;height:1px;background:var(--accent)}
+
+/* Hero (first section, special) */
+.hero{position:relative;height:100vh;overflow:hidden;display:flex;align-items:center;justify-content:center;text-align:center}
+.hero video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(.5) saturate(1.2)}
+.hero::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at center,transparent 30%,rgba(10,10,20,.8)100%)}
+.hero__c{position:relative;z-index:2;padding:24px}
+.hero .kicker{font:500 11px/1 var(--label);letter-spacing:.4em;text-transform:uppercase;color:var(--accent);margin-bottom:32px}
+.hero h1{font-family:var(--display);font-size:clamp(72px,12vw,180px);font-weight:700;letter-spacing:-.04em;line-height:.9;margin-bottom:32px}
+.hero h1 em{font-style:italic;font-weight:300;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero .lede{color:var(--fg-dim);font-size:clamp(14px,1.6vw,18px);max-width:520px;margin:0 auto;font-weight:300}
+
+/* Outro */
+.outro{position:relative;height:100vh;overflow:hidden;display:flex;align-items:center;justify-content:center;text-align:center}
+.outro video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(.4) saturate(1.1)}
+.outro::after{content:'';position:absolute;inset:0;background:rgba(10,10,20,.6)}
+.outro__c{position:relative;z-index:2;padding:24px}
+.outro h2{font-family:var(--display);font-size:clamp(56px,8vw,120px);font-weight:700;letter-spacing:-.03em;line-height:.95;margin-bottom:32px}
+.outro h2 em{font-style:italic;font-weight:300;color:var(--accent)}
+.outro p{color:var(--fg-dim);max-width:560px;margin:0 auto 40px;line-height:1.7;font-size:17px;font-weight:300}
+.cta{display:inline-flex;align-items:center;height:52px;padding:0 32px;border-radius:999px;background:var(--accent);color:#fff;text-decoration:none;font:500 12px/1 var(--label);letter-spacing:.15em;text-transform:uppercase;transition:transform .3s,box-shadow .3s}
+.cta:hover{transform:translateY(-3px);box-shadow:0 12px 30px rgba(121,46,252,.35)}
+.cta--ghost{background:transparent;color:var(--fg);border:1px solid var(--fg);margin-inline-start:12px}
+.cta--ghost:hover{background:var(--fg);color:var(--bg);box-shadow:none}
+
+/* Progress + nav */
+.progress{position:fixed;bottom:0;left:0;right:0;height:2px;background:rgba(255,255,255,.1);z-index:100}
+.progress__fill{height:100%;width:0%;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .1s linear}
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:24px 40px;display:flex;justify-content:space-between;align-items:center;font:500 11px/1 var(--label);letter-spacing:.2em;text-transform:uppercase}
+.nav a{color:var(--fg);text-decoration:none;transition:color .3s}
+.nav a:hover{color:var(--accent)}
+.nav__logo{font-family:var(--display);font-size:18px;font-weight:700;letter-spacing:-.01em;text-transform:none}
+
+/* Custom cursor */
+.cursor{position:fixed;width:20px;height:20px;border:1px solid var(--accent);border-radius:50%;pointer-events:none;z-index:9999;transition:transform .15s ease;transform:translate(-50%,-50%);mix-blend-mode:difference}
+.cursor--hover{transform:translate(-50%,-50%) scale(2.5);background:rgba(121,46,252,.15)}
+
+@media (max-width:760px){
+  .nav{padding:16px 20px}
+  .section__c,.hero__c{padding:0 24px}
+  .section h2,.hero h1{font-size:clamp(36px,8vw,60px)}
+  body{cursor:auto}
+  .cursor{display:none}
+}
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+
+<nav class="nav">
+  <a href="#" class="nav__logo">HEXA Studio</a>
+  <div style="display:flex;gap:32px">
+    <a href="#living">Living</a>
+    <a href="#kitchen">Kitchen</a>
+    <a href="#bedroom">Bedroom</a>
+    <a href="#outdoor">Outdoor</a>
+  </div>
+</nav>
+
+<!-- Hero -->
+<section class="hero" id="hero">
+  <video class="lazy" data-src="../CLIPS/27.mp4" poster="../media/still.jpg" autoplay muted loop playsinline preload="none"></video>
+  <div class="hero__c">
+    <p class="kicker">HEXA Studio · Architectural Visualization · 2026</p>
+    <h1>Every space<br/>becomes <em>reality.</em></h1>
+    <p class="lede">تصور معماري في الوقت الفعلي — تجربة تفاعلية لاستكشاف مساحات مصممة بعناية.</p>
+  </div>
+</section>
+
+<!-- Living -->
+<section class="section" id="living">
+  <video class="lazy" data-src="../CLIPS/1.mp4" poster="../media/still.jpg" autoplay muted loop playsinline preload="none"></video>
+  <div class="section__c">
+    <span class="kicker">01 / Living</span>
+    <h2>Living <em>Space</em></h2>
+    <p>مساحة معيشة مفتوحة بسقف مرتفع، إضاءة طبيعية، مواد طبيعية (خشب، حجر، قماش).</p>
+    <div class="meta"><span>2026</span><span>Residential</span></div>
+  </div>
+</section>
+
+<!-- Kitchen -->
+<section class="section" id="kitchen">
+  <video class="lazy" data-src="../CLIPS/5.mp4" poster="../media/still.jpg" autoplay muted loop playsinline preload="none"></video>
+  <div class="section__c">
+    <span class="kicker">02 / Kitchen</span>
+    <h2>Kitchen & <em>Dining</em></h2>
+    <p>مطبخ مفتوح مع جزيرة مركزية، خزائن جوز، إضاءة دافئة.</p>
+    <div class="meta"><span>2026</span><span>Interior</span></div>
+  </div>
+</section>
+
+<!-- Bedroom -->
+<section class="section" id="bedroom">
+  <video class="lazy" data-src="../CLIPS/9.mp4" poster="../media/still.jpg" autoplay muted loop playsinline preload="none"></video>
+  <div class="section__c">
+    <span class="kicker">03 / Bedroom</span>
+    <h2>Master <em>Bedroom</em></h2>
+    <p>غرفة نوم رئيسية مع حمام ملحق، إضاءة ناعمة، تفاصيل خشبية.</p>
+    <div class="meta"><span>2026</span><span>Private Suite</span></div>
+  </div>
+</section>
+
+<!-- Outdoor -->
+<section class="section" id="outdoor">
+  <video class="lazy" data-src="../CLIPS/18.mp4" poster="../media/still.jpg" autoplay muted loop playsinline preload="none"></video>
+  <div class="section__c">
+    <span class="kicker">04 / Outdoor</span>
+    <h2>Patio & <em>Garden</em></h2>
+    <p>فناء خارجي مع نباتات، ماء، إضاءة شمس.</p>
+    <div class="meta"><span>2026</span><span>Landscape</span></div>
+  </div>
+</section>
+
+<!-- Outro -->
+<section class="outro" id="contact">
+  <video class="lazy" data-src="../CLIPS/27.mp4" poster="../media/still.jpg" autoplay muted loop playsinline preload="none"></video>
+  <div class="outro__c">
+    <h2>Let's build<br/>something <em>remarkable.</em></h2>
+    <p>HEXA Studio transforms architectural concepts into photorealistic 3D visualizations.</p>
+    <a class="cta" href="mailto:info@hexastudio.net">Start a project</a>
+    <a class="cta cta--ghost" href="#hero">Back to top</a>
+  </div>
+</section>
+
+<div class="progress"><div class="progress__fill" id="progressFill"></div></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js"></script>
+<script>
+// Custom cursor
+const cursor=document.getElementById('cursor');
+let mx=0,my=0,cx=0,cy=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;});
+function animCursor(){cx+=(mx-cx)*.15;cy+=(my-cy)*.15;cursor.style.left=cx+'px';cursor.style.top=cy+'px';requestAnimationFrame(animCursor);}
+animCursor();
+document.querySelectorAll('a').forEach(el=>{
+  el.addEventListener('mouseenter',()=>cursor.classList.add('cursor--hover'));
+  el.addEventListener('mouseleave',()=>cursor.classList.remove('cursor--hover'));
+});
+
+// Lazy loading (IntersectionObserver)
+const lazyVideos=document.querySelectorAll('.lazy');
+const io=new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    const v=e.target;
+    if(e.isIntersecting){if(!v.src&&v.dataset.src){v.src=v.dataset.src;v.load();}v.play().catch(()=>{});}
+    else{v.pause();}
+  });
+},{rootMargin:'400px 0px',threshold:0.01});
+lazyVideos.forEach(v=>io.observe(v));
+
+// GSAP animations
+gsap.registerPlugin(ScrollTrigger);
+document.querySelectorAll('.section,.hero,.outro').forEach(sec=>{
+  const v=sec.querySelector('video');
+  const c=sec.querySelector('.section__c,.hero__c,.outro__c');
+  if(v){gsap.from(v,{scale:1.15,opacity:0,duration:1.4,ease:'power3.out',scrollTrigger:{trigger:sec,start:'top 90%'}});}
+  if(c){gsap.from(c,{opacity:0,y:60,duration:1,ease:'power3.out',scrollTrigger:{trigger:sec,start:'top 80%'}});}
+});
+
+// Progress bar
+ScrollTrigger.create({
+  trigger:'body',
+  start:'top top',
+  end:'bottom bottom',
+  scrub:0.3,
+  onUpdate:(self)=>{document.getElementById('progressFill').style.width=(self.progress*100)+'%';}
+});
+</script>
+</body></html>

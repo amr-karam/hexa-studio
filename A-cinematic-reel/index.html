@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>A · Cinematic Reel · HEXA Studio</title>
+<meta name="theme-color" content="#f6f7fc"/>
+<link rel="stylesheet" href="../theme.css"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);overflow-x:hidden}
+.hero{position:relative;height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.hero video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
+.hero::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,rgba(246,247,252,.2)0%,rgba(246,247,252,.9)100%)}
+.hero__c{position:relative;z-index:2;text-align:center;padding:24px}
+h1{font-family:var(--display);font-size:clamp(56px,9vw,132px);letter-spacing:-.02em;margin-bottom:16px}
+h1 em{font-style:italic;color:var(--accent)}
+.lede{color:var(--fg-dim);font-size:clamp(14px,1.6vw,18px);max-width:560px;margin:0 auto 32px;line-height:1.6}
+.cta{display:inline-flex;align-items:center;height:48px;padding:0 28px;border:1px solid var(--accent);border-radius:999px;background:var(--accent);color:#fff;text-decoration:none;font:500 12px/1 var(--label);letter-spacing:.12em;text-transform:uppercase;transition:opacity .3s,transform .3s}
+.cta:hover{opacity:.88;transform:translateY(-2px)}
+.section{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:40px;padding:80px 48px;max-width:1400px;margin:0 auto}
+.section video{width:100%;height:60vh;object-fit:cover;border-radius:16px;box-shadow:0 20px 60px rgba(26,26,46,.15)}
+.section__text h2{font-family:var(--display);font-size:clamp(36px,4.5vw,64px);margin-bottom:16px;letter-spacing:-.01em}
+.section__text h2 em{color:var(--accent);font-style:italic}
+.section__text p{color:var(--fg-dim);line-height:1.7;font-size:16px;max-width:480px}
+.tag{display:inline-block;font:500 10px/1 var(--label);letter-spacing:.2em;text-transform:uppercase;color:var(--accent);margin-bottom:12px}
+@media (max-width:760px){.section{grid-template-columns:1fr;padding:40px 24px}.section video{height:40vh}}
+footer{padding:40px;text-align:center;color:var(--fg-dim);font:400 10px/1.5 var(--label);letter-spacing:.1em;text-transform:uppercase;border-top:1px solid var(--line)}
+</style>
+</head>
+<body>
+<section class="hero">
+  <video src="../CLIPS/27.mp4" autoplay muted loop playsinline poster="../media/still.jpg"></video>
+  <div class="hero__c">
+    <h1>HEXA <em>Studio</em></h1>
+    <p class="lede">تصور معماري في الوقت الفعلي — تجربة تفاعلية لاستكشاف مساحات مصممة بعناية.</p>
+    <a class="cta" href="#work">استكشاف الأعمال</a>
+  </div>
+</section>
+
+<section class="section" id="work">
+  <video src="../CLIPS/1.mp4" autoplay muted loop playsinline></video>
+  <div class="section__text">
+    <span class="tag">Project 01</span>
+    <h2>Living <em>Space</em></h2>
+    <p>مساحة معيشة مفتوحة بسقف مرتفع، إضاءة طبيعية، مواد طبيعية (خشب، حجر، قماش).</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section__text">
+    <span class="tag">Project 02</span>
+    <h2>Kitchen & <em>Dining</em></h2>
+    <p>مطبخ مفتوح مع جزيرة مركزية، خزائن جوز، إضاءة دافئة.</p>
+  </div>
+  <video src="../CLIPS/5.mp4" autoplay muted loop playsinline></video>
+</section>
+
+<section class="section">
+  <video src="../CLIPS/9.mp4" autoplay muted loop playsinline></video>
+  <div class="section__text">
+    <span class="tag">Project 03</span>
+    <h2>Master <em>Bedroom</em></h2>
+    <p>غرفة نوم رئيسية مع حمام ملحق، إضاءة ناعمة، تفاصيل خشبية.</p>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section__text">
+    <span class="tag">Project 04</span>
+    <h2>Patio & <em>Garden</em></h2>
+    <p>فناء خارجي مع نباتات، ماء، إضاءة شمس.</p>
+  </div>
+  <video src="../CLIPS/18.mp4" autoplay muted loop playsinline></video>
+</section>
+
+<footer>HEXA Studio · Architectural Visualization · 2026</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js"></script>
+<script>
+gsap.registerPlugin(ScrollTrigger);
+document.querySelectorAll('.section').forEach(s=>{
+  const v=s.querySelector('video');
+  if(v){gsap.from(v,{opacity:0,y:60,duration:1,scrollTrigger:{trigger:s,start:'top 80%'}});}
+  const t=s.querySelector('.section__text');
+  if(t){gsap.from(t,{opacity:0,x:40,duration:1,scrollTrigger:{trigger:s,start:'top 80%'}});}
+});
+</script>
+</body></html>

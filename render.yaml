@@ -1,0 +1,43 @@
+# Render Blueprint — HEXA Studio (static site, no build step)
+# Deploy: https://dashboard.render.com/blueprints
+# All JS/CSS deps are CDN-hosted; no package.json or bundler required.
+
+services:
+  - type: web
+    name: hexa-studio
+    env: static
+    plan: free
+    repo: .
+    branch: main
+    rootDir: .
+    staticPublishPath: .
+    domains:
+      - domain: hermes.hexastudio.net
+        type: primary
+    envVars:
+      - key: NODE_VERSION
+        value: 20
+    headers:
+      - source: /media/*
+        headers:
+          - key: Cache-Control
+            value: "public, max-age=31536000, immutable"
+      - source: /assets/tex*/**/*
+        headers:
+          - key: Cache-Control
+            value: "public, max-age=31536000, immutable"
+      - source: /assets/sky/*
+        headers:
+          - key: Cache-Control
+            value: "public, max-age=31536000, immutable"
+      - source: /CLIPS/*
+        headers:
+          - key: Cache-Control
+            value: "public, max-age=31536000, immutable"
+    routes:
+      - type: rewrite
+        source: /prompt
+        destination: /prompt/index.html
+      - type: rewrite
+        source: /
+        destination: /index.html

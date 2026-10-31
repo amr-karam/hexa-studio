@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>HEXA Studio · Scroll Through Space</title>
+<meta name="theme-color" content="#0a0a14"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#0a0a14;--fg:#f0f2ff;--fg-dim:rgba(240,242,255,.7);
+  --accent:#792efc;--accent2:#3cb4f0;--line:rgba(240,242,255,.12);
+  --display:'Archivo',sans-serif;--body:'Space Grotesk',sans-serif;--label:'Space Grotesk',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--fg);font-family:var(--body);overflow-x:hidden}
+body{cursor:none}
+
+/* Video container - fixed full viewport */
+.video-stage{position:fixed;inset:0;z-index:0;overflow:hidden;background:#000}
+.video-stage video{width:100%;height:100%;object-fit:cover;filter:brightness(.7) saturate(1.15)}
+.video-stage::after{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at center,transparent 30%,rgba(10,10,20,.7)100%);pointer-events:none}
+.video-stage .vignette{position:absolute;inset:0;background:linear-gradient(180deg,rgba(10,10,20,.3)0%,transparent 30%,transparent 70%,rgba(10,10,20,.8)100%);pointer-events:none}
+
+/* Scroll container (tall) */
+.scroll-container{position:relative;height:500vh;z-index:1}
+
+/* Text overlays at different scroll positions */
+.overlay{position:fixed;inset:0;z-index:2;display:flex;align-items:center;justify-content:center;pointer-events:none;padding:0 8vw;opacity:0;transition:opacity .6s ease}
+.overlay.active{opacity:1}
+.overlay__c{max-width:720px;text-align:center}
+.overlay .kicker{font:500 11px/1 var(--label);letter-spacing:.4em;text-transform:uppercase;color:var(--accent);margin-bottom:24px}
+.overlay h2{font-family:var(--display);font-size:clamp(48px,7vw,96px);font-weight:700;letter-spacing:-.03em;line-height:.95;margin-bottom:20px}
+.overlay h2 em{font-style:italic;font-weight:300;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.overlay p{color:var(--fg-dim);font-size:clamp(15px,1.6vw,19px);line-height:1.7;font-weight:300;max-width:560px;margin:0 auto}
+.overlay .meta{margin-top:24px;font:500 10px/1 var(--label);letter-spacing:.2em;text-transform:uppercase;color:var(--fg-dim)}
+
+/* Progress bar */
+.progress{position:fixed;bottom:0;left:0;right:0;height:2px;background:rgba(255,255,255,.1);z-index:100}
+.progress__fill{height:100%;width:0%;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width .1s linear}
+
+/* Top nav */
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:24px 40px;display:flex;justify-content:space-between;align-items:center;font:500 11px/1 var(--label);letter-spacing:.2em;text-transform:uppercase}
+.nav a{color:var(--fg);text-decoration:none;transition:color .3s}
+.nav a:hover{color:var(--accent)}
+.nav__logo{font-family:var(--display);font-size:18px;font-weight:700;letter-spacing:-.01em;text-transform:none}
+
+/* Scroll hint */
+.scroll-hint{position:fixed;bottom:40px;left:50%;transform:translateX(-50%);z-index:10;font:500 10px/1 var(--label);letter-spacing:.3em;text-transform:uppercase;color:var(--fg-dim);display:flex;flex-direction:column;align-items:center;gap:12px}
+.scroll-hint .line{width:1px;height:40px;background:linear-gradient(180deg,var(--accent),transparent);animation:scrollLine 2s infinite}
+@keyframes scrollLine{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+
+/* Outro section */
+.outro{position:fixed;inset:0;z-index:3;display:flex;align-items:center;justify-content:center;text-align:center;opacity:0;pointer-events:none;padding:24px;background:rgba(10,10,20,.85);backdrop-filter:blur(20px)}
+.outro.active{opacity:1;pointer-events:auto}
+.outro h2{font-family:var(--display);font-size:clamp(56px,8vw,120px);font-weight:700;letter-spacing:-.03em;line-height:.95;margin-bottom:32px}
+.outro h2 em{font-style:italic;font-weight:300;color:var(--accent)}
+.outro p{color:var(--fg-dim);max-width:560px;margin:0 auto 40px;line-height:1.7;font-size:17px;font-weight:300}
+.cta{display:inline-flex;align-items:center;height:52px;padding:0 32px;border-radius:999px;background:var(--accent);color:#fff;text-decoration:none;font:500 12px/1 var(--label);letter-spacing:.15em;text-transform:uppercase;transition:transform .3s,box-shadow .3s}
+.cta:hover{transform:translateY(-3px);box-shadow:0 12px 30px rgba(121,46,252,.35)}
+.cta--ghost{background:transparent;color:var(--fg);border:1px solid var(--fg);margin-inline-start:12px}
+.cta--ghost:hover{background:var(--fg);color:var(--bg);box-shadow:none}
+
+/* Custom cursor */
+.cursor{position:fixed;width:20px;height:20px;border:1px solid var(--accent);border-radius:50%;pointer-events:none;z-index:9999;transition:transform .15s ease;transform:translate(-50%,-50%);mix-blend-mode:difference}
+.cursor--hover{transform:translate(-50%,-50%) scale(2.5);background:rgba(121,46,252,.15)}
+
+@media (max-width:760px){
+  .nav{padding:16px 20px}
+  .overlay h2{font-size:clamp(36px,8vw,60px)}
+  .outro h2{font-size:clamp(40px,8vw,72px)}
+  body{cursor:auto}
+  .cursor{display:none}
+}
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+
+<div class="video-stage">
+  <video id="mainVideo" src="../CLIPS/27.mp4" muted playsinline preload="auto"></video>
+  <div class="vignette"></div>
+</div>
+
+<nav class="nav">
+  <a href="#" class="nav__logo">HEXA Studio</a>
+  <div style="display:flex;gap:32px">
+    <a href="#work">Work</a>
+    <a href="#studio">Studio</a>
+    <a href="#contact">Contact</a>
+  </div>
+</nav>
+
+<div class="scroll-container" id="scrollContainer"></div>
+
+<!-- Overlays at different scroll positions -->
+<div class="overlay" id="ov0">
+  <div class="overlay__c">
+    <p class="kicker">HEXA Studio · Architectural Visualization</p>
+    <h2>Every space<br/>becomes <em>reality.</em></h2>
+    <p>تصور معماري في الوقت الفعلي — تجربة تفاعلية لاستكشاف مساحات مصممة بعناية.</p>
+  </div>
+</div>
+
+<div class="overlay" id="ov1">
+  <div class="overlay__c">
+    <p class="kicker">01 / Living</p>
+    <h2>Living <em>Space</em></h2>
+    <p>مساحة معيشة مفتوحة بسقف مرتفع، إضاءة طبيعية، مواد طبيعية (خشب، حجر، قماش).</p>
+    <div class="meta">2026 · Residential</div>
+  </div>
+</div>
+
+<div class="overlay" id="ov2">
+  <div class="overlay__c">
+    <p class="kicker">02 / Kitchen</p>
+    <h2>Kitchen & <em>Dining</em></h2>
+    <p>مطبخ مفتوح مع جزيرة مركزية، خزائن جوز، إضاءة دافئة.</p>
+    <div class="meta">2026 · Interior</div>
+  </div>
+</div>
+
+<div class="overlay" id="ov3">
+  <div class="overlay__c">
+    <p class="kicker">03 / Bedroom</p>
+    <h2>Master <em>Bedroom</em></h2>
+    <p>غرفة نوم رئيسية مع حمام ملحق، إضاءة ناعمة، تفاصيل خشبية.</p>
+    <div class="meta">2026 · Private Suite</div>
+  </div>
+</div>
+
+<div class="overlay" id="ov4">
+  <div class="overlay__c">
+    <p class="kicker">04 / Outdoor</p>
+    <h2>Patio & <em>Garden</em></h2>
+    <p>فناء خارجي مع نباتات، ماء، إضاءة شمس.</p>
+    <div class="meta">2026 · Landscape</div>
+  </div>
+</div>
+
+<div class="outro" id="outro">
+  <div>
+    <h2>Let's build<br/>something <em>remarkable.</em></h2>
+    <p>HEXA Studio transforms architectural concepts into photorealistic 3D visualizations.</p>
+    <a class="cta" href="mailto:info@hexastudio.net">Start a project</a>
+    <a class="cta cta--ghost" href="#" id="replay">Replay</a>
+  </div>
+</div>
+
+<div class="progress"><div class="progress__fill" id="progressFill"></div></div>
+
+<div class="scroll-hint" id="scrollHint">
+  <span>Scroll to explore</span>
+  <div class="line"></div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js"></script>
+<script>
+const video=document.getElementById('mainVideo');
+const overlays=[0,1,2,3,4].map(i=>document.getElementById('ov'+i));
+const outro=document.getElementById('outro');
+const progressFill=document.getElementById('progressFill');
+const scrollHint=document.getElementById('scrollHint');
+
+// Custom cursor
+const cursor=document.getElementById('cursor');
+let mx=0,my=0,cx=0,cy=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;});
+function animCursor(){cx+=(mx-cx)*.15;cy+=(my-cy)*.15;cursor.style.left=cx+'px';cursor.style.top=cy+'px';requestAnimationFrame(animCursor);}
+animCursor();
+document.querySelectorAll('a').forEach(el=>{
+  el.addEventListener('mouseenter',()=>cursor.classList.add('cursor--hover'));
+  el.addEventListener('mouseleave',()=>cursor.classList.remove('cursor--hover'));
+});
+
+// Wait for video metadata
+video.addEventListener('loadedmetadata',()=>{
+  const duration=video.duration;
+  // Scroll-scrubbing: map scroll progress to video time
+  ScrollTrigger.create({
+    trigger:'#scrollContainer',
+    start:'top top',
+    end:'bottom bottom',
+    scrub:0.5,
+    onUpdate:(self)=>{
+      const p=self.progress;
+      // Scrub video
+      video.currentTime=p*duration;
+      // Progress bar
+      progressFill.style.width=(p*100)+'%';
+      // Hide scroll hint after first scroll
+      if(p>0.05)scrollHint.style.opacity='0';
+      else scrollHint.style.opacity='1';
+      // Show overlays at different scroll positions
+      const seg=p*5; // 5 segments
+      overlays.forEach((ov,i)=>{
+        const center=i+0.5;
+        const dist=Math.abs(seg-center);
+        if(dist<0.6){ov.classList.add('active');}
+        else{ov.classList.remove('active');}
+      });
+      // Outro at the end
+      if(p>0.92){outro.classList.add('active');}
+      else{outro.classList.remove('active');}
+    }
+  });
+});
+// Ensure video plays (muted autoplay for loading)
+video.muted=true;
+video.play().catch(()=>{});
+
+// Replay button
+document.getElementById('replay').addEventListener('click',e=>{
+  e.preventDefault();
+  window.scrollTo({top:0,behavior:'smooth'});
+  outro.classList.remove('active');
+});
+
+// Prevent default scroll on outro
+outro.addEventListener('click',e=>{if(e.target===outro)window.scrollTo({top:0,behavior:'smooth'});});
+</script>
+</body></html>

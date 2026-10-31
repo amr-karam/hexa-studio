@@ -1,0 +1,26 @@
+# Hermes cache scratch files
+C?Usersamrmo.hermescachescratchlist_tables.js
+*.hermescache*
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Logs
+*.log
+npm-debug.log*
+
+# Misc
+.env
+.env.local
+
+# Large binary video assets (ignored from git)
+CLIPS/

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>E · Video Scrubbing · HEXA Studio</title>
+<meta name="theme-color" content="#f6f7fc"/>
+<link rel="stylesheet" href="../theme.css"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);overflow-x:hidden}
+.hero{height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:24px}
+h1{font-family:var(--display);font-size:clamp(56px,9vw,132px);letter-spacing:-.02em;margin-bottom:16px}
+h1 em{font-style:italic;color:var(--accent)}
+.lede{color:var(--fg-dim);font-size:clamp(14px,1.6vw,18px);max-width:560px;margin:0 auto;line-height:1.6}
+.scrub-wrap{position:relative;height:400vh}
+.scrub-stage{position:sticky;top:0;height:100vh;display:flex;align-items:center;justify-content:center;background:var(--bg);overflow:hidden}
+.scrub-stage video{width:80%;max-height:75vh;object-fit:cover;border-radius:20px;box-shadow:0 30px 80px rgba(26,26,46,.2)}
+.scrub-stage .overlay{position:absolute;bottom:8vh;left:0;right:0;text-align:center;pointer-events:none}
+.scrub-stage .overlay h2{font-family:var(--display);font-size:clamp(32px,5vw,64px);margin-bottom:8px}
+.scrub-stage .overlay h2 em{color:var(--accent);font-style:italic}
+.scrub-stage .overlay p{color:var(--fg-dim);max-width:560px;margin:0 auto;font-size:16px}
+.scrub-stage .progress{position:absolute;bottom:4vh;left:8vw;right:8vw;height:3px;background:var(--line);border-radius:2px}
+.scrub-stage .progress__bar{height:100%;width:0%;background:var(--accent);border-radius:2px;transition:width .1s linear}
+.beat{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .4s;pointer-events:none}
+.beat.active{opacity:1}
+footer{padding:40px;text-align:center;color:var(--fg-dim);font:400 10px/1.5 var(--label);letter-spacing:.1em;text-transform:uppercase;border-top:1px solid var(--line)}
+</style>
+</head>
+<body>
+<section class="hero">
+  <h1>HEXA <em>Studio</em></h1>
+  <p class="lede">تصور معماري في الوقت الفعلي — تجربة تفاعلية لاستكشاف مساحات مصممة بعناية.</p>
+</section>
+
+<div class="scrub-wrap">
+  <div class="scrub-stage">
+    <video id="scrubVid" src="../CLIPS/27.mp4" muted playsinline preload="auto" poster="../media/still.jpg"></video>
+    <div class="overlay">
+      <h2 id="scrubTitle">HEXA <em>Studio</em></h2>
+      <p id="scrubText">تصور معماري في الوقت الفعلي</p>
+    </div>
+    <div class="progress"><div class="progress__bar" id="progressBar"></div></div>
+  </div>
+</div>
+
+<footer>HEXA Studio · Architectural Visualization · 2026</footer>
+<script>
+const vid=document.getElementById('scrubVid');
+const title=document.getElementById('scrubTitle');
+const text=document.getElementById('scrubText');
+const bar=document.getElementById('progressBar');
+const beats=[
+  {video:'../CLIPS/27.mp4',title:'HEXA Studio',text:'تصور معماري في الوقت الفعلي',start:0,end:0.2},
+  {video:'../CLIPS/1.mp4',title:'Living Space',text:'مساحة معيشة مفتوحة بسقف مرتفع',start:0.2,end:0.4},
+  {video:'../CLIPS/5.mp4',title:'Kitchen',text:'مطبخ مفتوح مع جزيرة مركزية',start:0.4,end:0.6},
+  {video:'../CLIPS/9.mp4',title:'Bedroom',text:'غرفة نوم رئيسية مع حمام ملحق',start:0.6,end:0.8},
+  {video:'../CLIPS/18.mp4',title:'Patio',text:'فناء خارجي مع نباتات وماء',start:0.8,end:1.0},
+];
+let currentBeat=null;
+function updateScrub(){
+  const wrap=document.querySelector('.scrub-wrap');
+  const rect=wrap.getBoundingClientRect();
+  const total=wrap.offsetHeight-window.innerHeight;
+  const scrolled=-rect.top;
+  const p=Math.max(0,Math.min(1,scrolled/total));
+  bar.style.width=(p*100)+'%';
+  const beat=beats.find(b=>p>=b.start && p<b.end) || beats[beats.length-1];
+  if(beat!==currentBeat){
+    currentBeat=beat;
+    if(vid.src.indexOf(beat.video)===-1){vid.src=beat.video;vid.load();}
+    title.innerHTML=beat.title.replace('Studio','<em>Studio</em>');
+    text.textContent=beat.text;
+  }
+  // scrub video time within beat range
+  if(vid.duration){
+    const beatP=(p-beat.start)/(beat.end-beat.start);
+    vid.currentTime=Math.max(0,Math.min(vid.duration,beatP*vid.duration));
+  }
+}
+window.addEventListener('scroll',updateScrub,{passive:true});
+window.addEventListener('load',()=>{vid.play().catch(()=>{});updateScrub();});
+</script>
+</body></html>

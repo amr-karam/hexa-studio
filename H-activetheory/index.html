@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>HEXA Studio · Architectural Visualization</title>
+<meta name="theme-color" content="#0a0a14"/>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@300;400;500;600;700&family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root{
+  --bg:#0a0a14;--fg:#f0f2ff;--fg-dim:rgba(240,242,255,.65);
+  --accent:#792efc;--accent2:#3cb4f0;--line:rgba(240,242,255,.12);
+  --display:'Archivo',sans-serif;--body:'Space Grotesk',sans-serif;--label:'Space Grotesk',sans-serif;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{background:var(--bg);color:var(--fg);font-family:var(--body);overflow-x:hidden;scroll-behavior:smooth}
+body{cursor:none}
+
+/* Custom cursor */
+.cursor{position:fixed;width:20px;height:20px;border:1px solid var(--accent);border-radius:50%;pointer-events:none;z-index:9999;transition:transform .15s ease,opacity .2s;transform:translate(-50%,-50%);mix-blend-mode:difference}
+.cursor--hover{transform:translate(-50%,-50%) scale(2.5);background:rgba(121,46,252,.15)}
+
+/* Top nav minimal */
+.nav{position:fixed;top:0;left:0;right:0;z-index:100;padding:24px 40px;display:flex;justify-content:space-between;align-items:center;font:500 11px/1 var(--label);letter-spacing:.2em;text-transform:uppercase}
+.nav a{color:var(--fg);text-decoration:none;transition:color .3s}
+.nav a:hover{color:var(--accent)}
+.nav__logo{font-family:var(--display);font-size:18px;font-weight:700;letter-spacing:-.01em;text-transform:none}
+.nav__links{display:flex;gap:32px}
+.nav__toggle{display:flex;align-items:center;gap:8px;cursor:pointer}
+.nav__toggle .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(1.3)}}
+
+/* Hero */
+.hero{position:relative;height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden}
+.hero video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(.6) saturate(1.2)}
+.hero::after{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% 50%,transparent 0%,rgba(10,10,20,.6)100%)}
+.hero__c{position:relative;z-index:2;text-align:center;padding:24px}
+.hero__kicker{font:500 11px/1 var(--label);letter-spacing:.4em;text-transform:uppercase;color:var(--accent);margin-bottom:32px;opacity:0;animation:fadeUp 1s .3s forwards}
+.hero h1{font-family:var(--display);font-size:clamp(72px,12vw,180px);font-weight:700;letter-spacing:-.04em;line-height:.9;margin-bottom:32px;opacity:0;animation:fadeUp 1.2s .5s forwards}
+.hero h1 em{font-style:italic;font-weight:300;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero .lede{color:var(--fg-dim);font-size:clamp(14px,1.6vw,18px);max-width:520px;margin:0 auto;opacity:0;animation:fadeUp 1s .7s forwards;font-weight:300}
+@keyframes fadeUp{from{opacity:0;transform:translateY(40px)}to{opacity:1;transform:translateY(0)}}
+.scroll-hint{position:absolute;bottom:40px;left:50%;transform:translateX(-50%);z-index:2;font:500 10px/1 var(--label);letter-spacing:.3em;text-transform:uppercase;color:var(--fg-dim);display:flex;flex-direction:column;align-items:center;gap:12px;opacity:0;animation:fadeUp 1s 1.2s forwards}
+.scroll-hint .line{width:1px;height:40px;background:linear-gradient(180deg,var(--accent),transparent);animation:scrollLine 2s infinite}
+@keyframes scrollLine{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+
+/* Chapter sections - full screen video */
+.chapter{position:relative;height:100vh;overflow:hidden}
+.chapter video{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:brightness(.5) saturate(1.1);transform:scale(1.1);transition:transform 8s ease}
+.chapter:hover video{transform:scale(1)}
+.chapter::after{content:'';position:absolute;inset:0;background:linear-gradient(90deg,rgba(10,10,20,.8)0%,rgba(10,10,20,.3)50%,rgba(10,10,20,.8)100%)}
+.chapter__c{position:relative;z-index:2;height:100%;display:flex;flex-direction:column;justify-content:center;padding:0 8vw;max-width:600px}
+.chapter__num{font:500 11px/1 var(--label);letter-spacing:.3em;text-transform:uppercase;color:var(--accent);margin-bottom:16px}
+.chapter h2{font-family:var(--display);font-size:clamp(48px,6vw,88px);font-weight:700;letter-spacing:-.03em;line-height:1;margin-bottom:20px}
+.chapter h2 em{font-style:italic;font-weight:300;color:var(--accent)}
+.chapter p{color:var(--fg-dim);font-size:16px;line-height:1.7;max-width:440px;font-weight:300;margin-bottom:24px}
+.chapter__meta{font:500 10px/1 var(--label);letter-spacing:.2em;text-transform:uppercase;color:var(--fg-dim);display:flex;gap:24px}
+.chapter__meta span{position:relative;padding-inline-start:16px}
+.chapter__meta span::before{content:'';position:absolute;left:0;top:50%;width:8px;height:1px;background:var(--accent)}
+
+/* Stats section */
+.stats{padding:120px 8vw;display:grid;grid-template-columns:repeat(4,1fr);gap:40px;border-top:1px solid var(--line);border-bottom:1px solid var(--line)}
+.stat__num{font-family:var(--display);font-size:clamp(48px,6vw,80px);font-weight:700;letter-spacing:-.03em;background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;background-clip:text;color:transparent;margin-bottom:8px}
+.stat__label{font:500 10px/1 var(--label);letter-spacing:.2em;text-transform:uppercase;color:var(--fg-dim)}
+
+/* Outro */
+.outro{min-height:80vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:80px 24px}
+.outro h2{font-family:var(--display);font-size:clamp(56px,8vw,120px);font-weight:700;letter-spacing:-.03em;line-height:.95;margin-bottom:32px}
+.outro h2 em{font-style:italic;font-weight:300;color:var(--accent)}
+.outro p{color:var(--fg-dim);max-width:560px;margin:0 auto 40px;line-height:1.7;font-size:17px;font-weight:300}
+.outro .cta{margin:0 8px}
+
+footer{padding:40px 8vw;display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--line);font:400 10px/1.5 var(--label);letter-spacing:.1em;text-transform:uppercase;color:var(--fg-dim)}
+footer a{color:var(--fg-dim);text-decoration:none;transition:color .3s}
+footer a:hover{color:var(--accent)}
+
+/* Lazy loading */
+.lazy{background:#1a1a2e}
+
+@media (max-width:760px){
+  .nav{padding:16px 20px}
+  .nav__links{display:none}
+  .chapter{padding:0 24px}
+  .chapter__c{max-width:100%}
+  .stats{grid-template-columns:repeat(2,1fr);padding:60px 24px;gap:24px}
+  .outro{padding:60px 24px}
+  footer{flex-direction:column;gap:16px;text-align:center}
+  body{cursor:auto}
+  .cursor{display:none}
+}
+</style>
+</head>
+<body>
+
+<div class="cursor" id="cursor"></div>
+
+<nav class="nav">
+  <a href="#" class="nav__logo">HEXA Studio</a>
+  <div class="nav__links">
+    <a href="#work">Work</a>
+    <a href="#studio">Studio</a>
+    <a href="#contact">Contact</a>
+  </div>
+  <div class="nav__toggle"><span class="dot"></span> Toggle Audio</div>
+</nav>
+
+<section class="hero">
+  <video class="lazy" data-src="../CLIPS/27.mp4" poster="../media/still.jpg" autoplay muted loop playsinline preload="none"></video>
+  <div class="hero__c">
+    <p class="hero__kicker">Architectural Visualization · Est. 2026</p>
+    <h1>Every space<br/>becomes <em>reality.</em></h1>
+    <p class="lede">تصور معماري في الوقت الفعلي — تجربة تفاعلية لاستكشاف مساحات مصممة بعناية.</p>
+  </div>
+  <div class="scroll-hint">
+    <span>Scroll to explore</span>
+    <div class="line"></div>
+  </div>
+</section>
+
+<section class="chapter" id="work">
+  <video class="lazy" data-src="../CLIPS/1.mp4" poster="../media/still.jpg" autoplay muted loop playsinline preload="none"></video>
+  <div class="chapter__c">
+    <span class="chapter__num">01 / Living</span>
+    <h2>Living <em>Space</em></h2>
+    <p>مساحة معيشة مفتوحة بسقف مرتفع، إضاءة طبيعية، مواد طبيعية (خشب، حجر، قماش).</p>
+    <div class="chapter__meta"><span>2026</span><span>Residential</span></div>
+  </div>
+</section>
+
+<section class="chapter">
+  <video class="lazy" data-src="../CLIPS/5.mp4" poster="../media/still.jpg" autoplay muted loop playsinline preload="none"></video>
+  <div class="chapter__c">
+    <span class="chapter__num">02 / Kitchen</span>
+    <h2>Kitchen & <em>Dining</em></h2>
+    <p>مطبخ مفتوح مع جزيرة مركزية، خزائن جوز، إضاءة دافئة.</p>
+    <div class="chapter__meta"><span>2026</span><span>Interior</span></div>
+  </div>
+</section>
+
+<section class="chapter">
+  <video class="lazy" data-src="../CLIPS/9.mp4" poster="../media/still.jpg" autoplay muted loop playsinline preload="none"></video>
+  <div class="chapter__c">
+    <span class="chapter__num">03 / Bedroom</span>
+    <h2>Master <em>Bedroom</em></h2>
+    <p>غرفة نوم رئيسية مع حمام ملحق، إضاءة ناعمة، تفاصيل خشبية.</p>
+    <div class="chapter__meta"><span>2026</span><span>Private Suite</span></div>
+  </div>
+</section>
+
+<section class="chapter">
+  <video class="lazy" data-src="../CLIPS/18.mp4" poster="../media/still.jpg" autoplay muted loop playsinline preload="none"></video>
+  <div class="chapter__c">
+    <span class="chapter__num">04 / Outdoor</span>
+    <h2>Patio & <em>Garden</em></h2>
+    <p>فناء خارجي مع نباتات، ماء، إضاءة شمس.</p>
+    <div class="chapter__meta"><span>2026</span><span>Landscape</span></div>
+  </div>
+</section>
+
+<section class="stats">
+  <div><div class="stat__num">25+</div><div class="stat__label">Projects</div></div>
+  <div><div class="stat__num">4K</div><div class="stat__label">Resolution</div></div>
+  <div><div class="stat__num">2026</div><div class="stat__label">Established</div></div>
+  <div><div class="stat__num">∞</div><div class="stat__label">Possibilities</div></div>
+</section>
+
+<section class="outro" id="contact">
+  <div>
+    <h2>Let's build<br/>something <em>remarkable.</em></h2>
+    <p>HEXA Studio transforms architectural concepts into photorealistic 3D visualizations.</p>
+    <a class="cta" href="mailto:info@hexastudio.net">Start a project</a>
+    <a class="cta cta--ghost" href="#work">View work</a>
+  </div>
+</section>
+
+<footer>
+  <span>HEXA Studio · Architectural Visualization</span>
+  <span><a href="#">Work</a> · <a href="#">Studio</a> · <a href="#">Contact</a></span>
+  <span>© 2026</span>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js"></script>
+<script>
+// Custom cursor
+const cursor=document.getElementById('cursor');
+let mx=0,my=0,cx=0,cy=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;});
+function animCursor(){cx+=(mx-cx)*.15;cy+=(my-cy)*.15;cursor.style.left=cx+'px';cursor.style.top=cy+'px';requestAnimationFrame(animCursor);}
+animCursor();
+document.querySelectorAll('a,button,.chapter').forEach(el=>{
+  el.addEventListener('mouseenter',()=>cursor.classList.add('cursor--hover'));
+  el.addEventListener('mouseleave',()=>cursor.classList.remove('cursor--hover'));
+});
+
+// Lazy loading (IntersectionObserver) - high quality + fast
+const lazyVideos=document.querySelectorAll('.lazy');
+const io=new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    const v=e.target;
+    if(e.isIntersecting){if(!v.src&&v.dataset.src){v.src=v.dataset.src;v.load();}v.play().catch(()=>{});}
+    else{v.pause();}
+  });
+},{rootMargin:'400px 0px',threshold:0.01});
+lazyVideos.forEach(v=>io.observe(v));
+
+// GSAP animations
+gsap.registerPlugin(ScrollTrigger);
+document.querySelectorAll('.chapter').forEach(ch=>{
+  const v=ch.querySelector('video');
+  const c=ch.querySelector('.chapter__c');
+  if(v){gsap.from(v,{scale:1.2,opacity:0,duration:1.4,ease:'power3.out',scrollTrigger:{trigger:ch,start:'top 90%'}});}
+  if(c){gsap.from(c,{opacity:0,x:-60,duration:1,ease:'power3.out',scrollTrigger:{trigger:ch,start:'top 80%'}});}
+});
+gsap.from('.stats',{opacity:0,y:60,duration:1,scrollTrigger:{trigger:'.stats',start:'top 85%'}});
+gsap.from('.outro h2,.outro p,.outro .cta',{opacity:0,y:40,duration:1,stagger:.15,scrollTrigger:{trigger:'.outro',start:'top 80%'}});
+</script>
+</body></html>

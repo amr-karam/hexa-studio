@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>B · Sticky Story · HEXA Studio</title>
+<meta name="theme-color" content="#f6f7fc"/>
+<link rel="stylesheet" href="../theme.css"/>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--fg);font-family:var(--body)}
+.hero{height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:24px}
+h1{font-family:var(--display);font-size:clamp(56px,9vw,132px);letter-spacing:-.02em;margin-bottom:16px}
+h1 em{font-style:italic;color:var(--accent)}
+.lede{color:var(--fg-dim);font-size:clamp(14px,1.6vw,18px);max-width:560px;margin:0 auto;line-height:1.6}
+.sticky-wrap{position:relative;height:400vh}
+.sticky-video{position:sticky;top:0;height:100vh;display:flex;align-items:center;justify-content:center;overflow:hidden;background:var(--bg)}
+.sticky-video video{width:80%;max-height:70vh;object-fit:cover;border-radius:20px;box-shadow:0 30px 80px rgba(26,26,46,.2);transition:opacity .6s}
+.sticky-video .overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
+.sticky-video .overlay h2{font-family:var(--display);font-size:clamp(32px,5vw,64px);color:#fff;text-shadow:0 2px 20px rgba(0,0,0,.5);opacity:0;transition:opacity .6s}
+.beat{height:100vh;display:flex;align-items:center;padding:0 8vw}
+.beat__text{max-width:480px}
+.beat__text .tag{font:500 10px/1 var(--label);letter-spacing:.2em;text-transform:uppercase;color:var(--accent);margin-bottom:12px;display:block}
+.beat__text h3{font-family:var(--display);font-size:clamp(32px,4vw,52px);margin-bottom:16px;letter-spacing:-.01em}
+.beat__text h3 em{color:var(--accent);font-style:italic}
+.beat__text p{color:var(--fg-dim);line-height:1.7;font-size:16px}
+footer{padding:40px;text-align:center;color:var(--fg-dim);font:400 10px/1.5 var(--label);letter-spacing:.1em;text-transform:uppercase;border-top:1px solid var(--line)}
+</style>
+</head>
+<body>
+<section class="hero">
+  <h1>HEXA <em>Studio</em></h1>
+  <p class="lede">تصور معماري في الوقت الفعلي — تجربة تفاعلية لاستكشاف مساحات مصممة بعناية.</p>
+</section>
+
+<div class="sticky-wrap">
+  <div class="sticky-video">
+    <video id="mainVid" src="../CLIPS/27.mp4" autoplay muted loop playsinline poster="../media/still.jpg"></video>
+    <div class="overlay"><h2 id="overlayTitle"></h2></div>
+  </div>
+
+  <div class="beat" data-video="../CLIPS/1.mp4" data-title="Living Space">
+    <div class="beat__text">
+      <span class="tag">Beat 01</span>
+      <h3>Living <em>Space</em></h3>
+      <p>مساحة معيشة مفتوحة بسقف مرتفع، إضاءة طبيعية، مواد طبيعية.</p>
+    </div>
+  </div>
+  <div class="beat" data-video="../CLIPS/5.mp4" data-title="Kitchen">
+    <div class="beat__text">
+      <span class="tag">Beat 02</span>
+      <h3>Kitchen & <em>Dining</em></h3>
+      <p>مطبخ مفتوح مع جزيرة مركزية، خزائن جوز، إضاءة دافئة.</p>
+    </div>
+  </div>
+  <div class="beat" data-video="../CLIPS/9.mp4" data-title="Bedroom">
+    <div class="beat__text">
+      <span class="tag">Beat 03</span>
+      <h3>Master <em>Bedroom</em></h3>
+      <p>غرفة نوم رئيسية مع حمام ملحق، إضاءة ناعمة، تفاصيل خشبية.</p>
+    </div>
+  </div>
+  <div class="beat" data-video="../CLIPS/18.mp4" data-title="Patio">
+    <div class="beat__text">
+      <span class="tag">Beat 04</span>
+      <h3>Patio & <em>Garden</em></h3>
+      <p>فناء خارجي مع نباتات، ماء، إضاءة شمس.</p>
+    </div>
+  </div>
+</div>
+
+<footer>HEXA Studio · Architectural Visualization · 2026</footer>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js"></script>
+<script>
+gsap.registerPlugin(ScrollTrigger);
+const vid=document.getElementById('mainVid');
+const title=document.getElementById('overlayTitle');
+document.querySelectorAll('.beat').forEach(beat=>{
+  ScrollTrigger.create({
+    trigger:beat,start:'top center',end:'bottom center',
+    onEnter:()=>{vid.src=beat.dataset.video;vid.load();vid.play();title.textContent=beat.dataset.title;title.style.opacity=1;},
+    onLeaveBack:()=>{title.style.opacity=0;}
+  });
+});
+gsap.utils.toArray('.beat__text').forEach(t=>{
+  gsap.from(t,{opacity:0,x:-60,duration:1,scrollTrigger:{trigger:t,start:'top 80%'}});
+});
+</script>
+</body></html>
