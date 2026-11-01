@@ -1,0 +1,39 @@
+{
+  "name": "hexa-studio",
+  "version": "1.0.0",
+  "description": "Scroll-driven architectural visualization landing page for HEXA Studio. Static site, no build step.",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "node dev-server.js",
+    "serve": "npx serve . -p 3000",
+    "lint": "eslint . --ext .js,.html",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "node tests/smoke.test.js",
+    "test:all": "npm run lint && npm run test",
+    "validate": "node scripts/validate-assets.js",
+    "deploy:render": "render blueprints validate render.yaml"
+  },
+  "devDependencies": {
+    "eslint": "^8.57.0",
+    "prettier": "^3.2.0",
+    "serve": "^14.2.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "keywords": [
+    "architectural-visualization",
+    "three.js",
+    "gsap",
+    "scroll-driven",
+    "static-site"
+  ],
+  "author": "HEXA Studio <info@hexastudio.net>",
+  "license": "UNLICENSED",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/hexastudio/hexa-studio.git"
+  }
+}

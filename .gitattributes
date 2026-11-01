@@ -1,0 +1,30 @@
+# .gitattributes — Line ending normalization for hexa-studio
+# Runtime prerequisites: Git >= 2.0
+# Ensures consistent LF line endings across all platforms.
+
+* text=auto eol=lf
+
+# Binary files (do not normalize)
+*.mp4 binary
+*.hdr binary
+*.jpg binary
+*.jpeg binary
+*.png binary
+*.webp binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.otf binary
+
+# Text files (force LF)
+*.js text eol=lf
+*.css text eol=lf
+*.html text eol=lf
+*.json text eol=lf
+*.md text eol=lf
+*.yaml text eol=lf
+*.yml text eol=lf
+*.xml text eol=lf
+*.txt text eol=lf
+*.svg text eol=lf

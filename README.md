@@ -33,6 +33,8 @@ Inspired by the [Casa Serra](https://sam1983aing.github.io/casa-serra/) concept 
 ```
 hexa-studio/
 ├── index.html          # Main page (floor plan → 3D house)
+├── project.html        # Project showcase page
+├── hexa-live.html      # Live preview page
 ├── scene.js            # Main Three.js scene + room definitions (~90 KB)
 ├── staging.js          # Materials and textures staging (~43 KB)
 ├── gate.js             # WebGL2 gate + video fallback
@@ -40,16 +42,36 @@ hexa-studio/
 ├── light-options.js    # Lighting presets
 ├── theme.css           # Light theme CSS variables & styles
 ├── publish.css         # Fallback overlay styles
-├── starter-prompt.md   # The starter prompt used to generate the concept
+├── 404.html            # Custom 404 page
+├── favicon.svg         # Site favicon
+├── robots.txt          # SEO crawler rules
+├── sitemap.xml         # SEO sitemap
+├── package.json        # Project manifest + dev scripts
+├── dev-server.js       # Zero-dependency local dev server
+├── eslint.config.js    # ESLint flat config
+├── .prettierrc         # Prettier formatting config
+├── .editorconfig       # Editor consistency rules
+├── .gitattributes      # Line ending normalization
+├── .gitignore          # Git exclusion rules
+├── Dockerfile          # Containerized dev server
+├── render.yaml         # Render static site deployment
+├── README.md           # This file
 ├── IDEA.md             # Project idea / vision
+├── CONTRIBUTING.md     # Contribution guide
+├── CHANGELOG.md        # Version history
+├── LICENSE             # MIT license
+├── starter-prompt.md   # The starter prompt used to generate the concept
 ├── assets/tex-1k/      # 1K PBR texture sets (15 materials × arm/diff/nor)
 ├── assets/tex/         # Full-resolution PBR texture sets (15 materials)
 ├── assets/sky/         # HDR sky dome
-├── CLIPS/              # Fallback video clips (1.mp4 → 27.mp4, missing 12 & 24)
+├── CLIPS/              # Fallback video clips (25 of 27, missing 12 & 24)
+├── CLIPS/README.md     # Documents missing clips
 ├── media/              # walk.mp4, still.jpg, share.jpg, casa-larga images
 ├── prompt/             # Starter prompt sub-page
 ├── shared/             # Shared JS (fx-core, fx-post, fx-paint, fx-experience) + fx-ui.css
-└── README.md           # This file
+├── scripts/            # validate-assets.js
+├── tests/              # smoke.test.js
+└── .github/workflows/  # ci.yml (GitHub Actions)
 ```
 
 ## Rooms

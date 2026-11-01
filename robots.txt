@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Disallow: /CLIPS/
+Disallow: /assets/
+
+Sitemap: https://hexastudio.net/sitemap.xml
