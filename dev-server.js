@@ -83,7 +83,7 @@ const server = http.createServer((req, res) => {
 });
 
 server.listen(PORT, () => {
-  console.log(`\n  HEXA Studio dev server running at:\n`);
+  console.log('\n  HEXA Studio dev server running at:\n');
   console.log(`  → http://localhost:${PORT}\n`);
-  console.log(`  Press Ctrl+C to stop.\n`);
+  console.log('  Press Ctrl+C to stop.\n');
 });

@@ -24,3 +24,5 @@ npm-debug.log*
 
 # Large binary video assets (ignored from git)
 CLIPS/
+node_modules/
+package-lock.json

@@ -7,7 +7,7 @@
   "scripts": {
     "dev": "node dev-server.js",
     "serve": "npx serve . -p 3000",
-    "lint": "eslint . --ext .js,.html",
+    "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test": "node tests/smoke.test.js",
