@@ -12,7 +12,7 @@ HEXA Studio is an immersive digital experience that guides users through a virtu
 - **Core:** Three.js (r160.1), GSAP ScrollTrigger (v3.13.0), Lenis (v1.1.14)
 - **Architecture:** Plain-file static site (no build step)
 - **Styling:** Dual-theme CSS system (Light/Dark mode)
-- **Hosting:** GitHub Pages (Primary), Render (Blueprint configured)
+- **Hosting:** GitHub Pages (Primary — https://amr-karam.github.io/hexa-studio/). Render (Blocked: HTTP 402 billing). Production server `19.16.1.100` unreachable (SSH timeout).
 
 ## 📁 Project Structure
 - `index.html`: Main entry point.
@@ -21,7 +21,7 @@ HEXA Studio is an immersive digital experience that guides users through a virtu
 - `gate.js`: Handles WebGL2 compatibility and video fallbacks.
 - `assets/`: PBR textures, skyboxes, and environmental maps.
 - `CLIPS/`: High-resolution MP4 visualization clips.
-- `shared/`: Shared UI components and effects.
+- `shared/`: Shared UI components and effects. `shared/fx-jit.js` is the Just-In-Time media engine (`FX.JIT`): it tracks the live camera stop delivered by `FX.experience` (`ve.m.key`) via the `frame` hook in `scene.js`, pre-buffers current + next stop, disposes everything further, and blacklists the missing binaries `clip12.mp4` / `clip24.mp4`. Register per-stop media with `FX.JIT.pool(stopKey, [{src, poster}])`; read state via `FX.JIT.stats()`.
 
 ## 🚀 Local Development
 1. Clone the repository:
