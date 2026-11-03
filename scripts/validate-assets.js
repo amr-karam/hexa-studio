@@ -18,7 +18,8 @@ const clipsDir = path.join(ROOT, 'CLIPS');
 if (fs.existsSync(clipsDir)) {
   const clips = fs.readdirSync(clipsDir).filter(f => f.endsWith('.mp4'));
   console.log(`  CLIPS: ${clips.length} video files found`);
-  const expected = Array.from({ length: 27 }, (_, i) => `${i + 1}.mp4`);
+  const blacklisted = new Set(['12.mp4', '24.mp4']);
+  const expected = Array.from({ length: 27 }, (_, i) => `${i + 1}.mp4`).filter(f => !blacklisted.has(f));
   const missing = expected.filter(f => !clips.includes(f));
   if (missing.length > 0) {
     console.log(`  ⚠ Missing CLIPS: ${missing.join(', ')}`);

@@ -49,7 +49,11 @@
 .titleblock div { padding: 7px 12px 8px; border-left: 1px solid var(--fg); border-top: 1px solid var(--fg); display: flex; flex-direction: column; gap: 4px; }
 .titleblock div:nth-child(odd) { border-left: 0; }
 .titleblock div:nth-child(-n+2) { border-top: 0; }
-.titleblock span { opacity: 0.55; font-size: 8.5px; }
+.titleblock span { opacity: 0.78; font-size: 8.5px; }
+
+/* WCAG 2.4.7/2.4.11 — visible keyboard focus on both themes */
+:focus-visible { outline: 2px solid var(--accent, #b8452a); outline-offset: 3px; }
+
 .titleblock b { font-weight: 500; }
 .tag__no { color: var(--accent); }
 .count { font: 500 10px/1 var(--label); letter-spacing: 0.14em; text-transform: uppercase; }

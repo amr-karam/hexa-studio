@@ -13,7 +13,7 @@
 .fb__btn[hidden] { display: none; }
 .fb__btn:hover { background: var(--fg); color: var(--bg); }
 html.fb-on, html.fb-on body { overflow: hidden; }
-.loader__note { margin: 20px 0 0; font: 500 9.5px/1.6 var(--label); letter-spacing: 0.3em; text-transform: uppercase; opacity: 0.55; }
+.loader__note { margin: 20px 0 0; font: 500 9.5px/1.6 var(--label); letter-spacing: 0.3em; text-transform: uppercase; opacity: 0.785; }
 .loader__note span { display: none; }
 .wip { position: fixed; z-index: 30; top: 33px; right: calc(var(--gutter) + 178px); margin: 0; padding: 5px 9px 4px; border-radius: 3px; pointer-events: none;
   background: rgba(246, 247, 252, 0.72); color: var(--fg);

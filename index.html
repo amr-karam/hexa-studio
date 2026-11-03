@@ -35,7 +35,7 @@
       <p>HEXA Studio brings architecture to life.</p>
       <p>This is the experience we create.</p>
     </div>
-    <div class="loader__bar"><span>Drawing</span><i><b id="loadFill"></b></i><span id="loadPct">0%</span></div>
+    <div class="loader__bar"><span>Drawing</span><i><b id="loadFill"></b></i><span id="loadPct" aria-live="polite">0%</span></div>
     <p class="loader__note">Work in progress<span> · best on a laptop</span></p>
   </div>
 
@@ -105,7 +105,7 @@
     <p class="credit">HEXA Studio · Architectural Visualization · 2026</p>
   </section>
 
-  <aside class="file" id="file" aria-hidden="true" aria-labelledby="fileTitle">
+  <aside class="file" id="file" role="dialog" aria-modal="true" aria-hidden="true" aria-labelledby="fileTitle">
     <button class="file__close" id="fileClose">Close ×</button>
     <p class="file__no" id="fileNo"></p>
     <h3 class="file__title" id="fileTitle"></h3>
