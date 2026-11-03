@@ -10,7 +10,7 @@
     "lint": "eslint .",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "test": "node tests/smoke.test.js",
+    "test": "node tests/smoke.test.js && node tests/time.test.js && node tests/listen.test.js",
     "test:all": "npm run lint && npm run test",
     "validate": "node scripts/validate-assets.js",
     "deploy:render": "render blueprints validate render.yaml"
