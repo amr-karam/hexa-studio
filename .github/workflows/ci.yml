@@ -7,33 +7,18 @@ on:
     branches: [master, main]
 
 jobs:
-  lint:
+  quality-gate:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
           node-version: '20'
+          cache: npm
       - run: npm ci
-      - run: npm run lint
-      - run: npm run format:check
-
-  smoke-test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-      - run: npm ci
-      - run: npm test
-
-  validate-assets:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-      - run: npm ci
-      - run: npm run validate
+      - name: Lint
+        run: npm run lint
+      - name: Tests (smoke + time + listen)
+        run: npm test
+      - name: Asset validation
+        run: npm run validate
