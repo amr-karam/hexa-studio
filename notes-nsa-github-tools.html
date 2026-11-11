@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>7 GitHub Tools the NSA Uses — Key Takeaways | HEXA Studio</title>
+  <meta name="description" content="Actionable takeaways from the Electronic Tech Show video on seven NSA tools on GitHub — Ghidra, Mitigating Web Shells, SELinux, Rand Pass Generator, Apache NiFi, Simon and Speck, and the Enigma Simulator.">
+  <link rel="stylesheet" href="/theme.css">
+  <style>
+    .notes { max-width: 760px; margin: 0 auto; padding: 48px 24px 96px; }
+    .notes__back { display: inline-block; margin-bottom: 32px; font: 500 14px/1.4 var(--body); color: var(--accent); text-decoration: none; }
+    .notes__back:hover { text-decoration: underline; }
+    .notes h1 { font: 700 clamp(28px, 4vw, 40px)/1.2 var(--display); margin: 0 0 8px; }
+    .notes__meta { font: 400 14px/1.6 var(--body); color: var(--fg-dim); margin: 0 0 32px; }
+    .notes__meta a { color: var(--accent); }
+    .notes__cover { display: block; width: 100%; max-width: 640px; border-radius: 12px; margin: 0 0 40px; }
+    .notes h2 { font: 650 22px/1.3 var(--display); margin: 48px 0 16px; padding-top: 24px; border-top: 1px solid rgba(26,26,46,.12); }
+    .notes ul { margin: 0; padding-left: 20px; }
+    .notes li { font: 400 15px/1.7 var(--body); margin: 0 0 14px; }
+    .notes li strong { font-weight: 650; }
+    .notes code { font: 0.9em ui-monospace, SFMono-Regular, Menlo, monospace; background: rgba(99,102,241,.1); padding: 1px 6px; border-radius: 4px; }
+    .notes a.ts { color: var(--accent); text-decoration: none; white-space: nowrap; }
+    .notes a.ts:hover { text-decoration: underline; }
+    .notes__dl { display: flex; flex-wrap: wrap; gap: 12px; margin: 40px 0 0; padding: 24px; background: rgba(99,102,241,.06); border-radius: 12px; }
+    .notes__dl a { font: 600 14px/1.4 var(--body); color: var(--accent); text-decoration: none; padding: 10px 18px; border: 1px solid var(--accent); border-radius: 999px; }
+    .notes__dl a:hover { background: var(--accent); color: #fff; }
+    .notes__foot { margin-top: 56px; font: 400 13px/1.6 var(--body); color: var(--fg-dim); }
+    @media (prefers-color-scheme: dark) {
+      .notes h2 { border-color: rgba(255,255,255,.14); }
+      .notes__dl { background: rgba(99,102,241,.12); }
+    }
+  </style>
+</head>
+<body>
+  <main class="notes">
+    <a class="notes__back" href="/">&larr; HEXA Studio</a>
+
+    <h1>7 GitHub Tools the NSA Uses (That Anyone Can Download) &mdash; Key Takeaways</h1>
+    <p class="notes__meta">
+      Source: <a href="https://www.youtube.com/watch?v=i-V89uYnCZ4">7 GitHub Tools the NSA Uses (That Anyone Can Download)</a>
+      &mdash; Electronic Tech Show, ~15 min. Every takeaway links to the moment it is explained.
+    </p>
+
+    <a class="notes__cover" href="https://www.youtube.com/watch?v=i-V89uYnCZ4">
+      <img class="notes__cover" src="/notes/thumbnail.jpg" alt="Video thumbnail" width="640" height="360">
+    </a>
+
+    <h2>Reverse-engineer binaries safely with Ghidra</h2>
+    <ul>
+      <li><strong>Use Ghidra instead of paying for IDA Pro.</strong> The speaker notes IDA Pro's expert plan lists at &euro;4,999/year while the agency's Ghidra is free with 94,000+ GitHub stars. <a class="ts" href="https://www.youtube.com/watch?v=i-V89uYnCZ4&amp;t=700s">[11:40]</a> <a class="ts" href="https://www.youtube.com/watch?v=i-V89uYnCZ4&amp;t=712s">[11:52]</a></li>
+      <li><strong>Install it on Kali with one <code>apt</code> command</strong> &mdash; Kali packages Ghidra itself, with the code browser and decompiler included. <a class="ts" href="https://www.youtube.com/watch?v=i-V89uYnCZ4&amp;t=741s">[12:21]</a></li>
+      <li><strong>Script <code>analyzeHeadless</code> for batch work.</strong> Point it at a folder of samples and run overnight with no window; anything scripted in the GUI works headless, so one script scales to 1,000 files. <a class="ts" href="https://www.youtube.com/watch?v=i-V89uYnCZ4&amp;t=755s">[12:35]</a>&ndash;<a class="ts" href="https://www.youtube.com/watch?v=i-V89uYnCZ4&amp;t=774s">[12:54]</a></li>
+      <li><strong>Only open files you wrote yourself or crackme practice files, and only inside a VM</strong> &mdash; never an email attachment on your main computer. <a class="ts" href="https://www.youtube.com/watch?v=i-V89uYnCZ4&amp;t=776s">[12:56]</a>&ndash;<a class="ts" href="https://www.youtube.com/watch?v=i-V89uYnCZ4&amp;t=784s">[13:04]</a></li>
+      <li><strong>Assume any secret baked into a binary is readable in seconds.</strong> His demo: a name-scrubbed binary was decompiled in ~8 seconds and the string-compared password ("ETS 7731 NSA" per the captions) recovered &mdash; keep keys on the server. <a class="ts" href="https://www.youtube.com/watch?v=i-V89uYnCZ4&amp;t=794s">[13:14]</a>&ndash;<a class="ts" href="https://www.youtube.com/watch?v=i-V89uYnCZ4&amp;t=846s">[14:06]</a></li>
+      <li><strong>Know the history of its debug mode:</strong> Rob Joyce said on stage there was no backdoor; within hours Matthew Hickey showed Ghidra's debug mode opened port 18001 to the local network, letting anyone who could reach it run code. Debug mode is off by default and 9.0.1 closed the port. <a class="ts" href="https://www.youtube.com/watch?v=i-V89uYnCZ4&amp;t=819s">[13:39]</a>&ndash;<a class="ts" href="https://www.youtube.com/watch?v=i-V89uYnCZ4&amp;t=837s">[13:57]</a></li>
+    </ul>
+
+    <h2>Hunt web shells with Yara &mdash; and a clean-copy compare</h2>
+    <ul>
+      <li><strong>Get the NSA/Australian Signals Directorate "Mitigating Web Shells" repo</strong>, which ships Yara rules (a core set and an extended set) for finding shells dropped on a server. <a class="ts" href="https://www.youtube.com/watch?v=i-V89uYnCZ4&amp;t=260s">[4:20]</a> <a class="ts" href="https://www.youtube.com/watch?v=i-V89uYnCZ4&amp;t=271s">[4:31]</a> <a class="ts" href="https://www.youtube.com/watch?v=i-V89uYnCZ4&amp;t=277s">[4:37]</a></li>
+      <li><strong>Run both rule sets &mdash; don't trust one.</strong> His test: a 3-line shell planted in an uploads folder as <code>avatar.php</code> was missed by the core set and flagged twice (obfuscated functionality, possible indicator) only by the extended set. <a class="ts" href="https://www.youtube.com/watch?v=i-V89uYnCZ4&amp;t=288s">[4:48]</a>&ndash;<a class="ts" href="https://www.youtube.com/watch?v=i-V89uYnCZ4&amp;t=302s">[5:02]</a></li>
+      <li><strong>Vet core hits first and expect false positives from extended rules</strong> &mdash; they flagged a harmless git sample hook script; the README says to vet core hits first and use the compiled rule files (some security software flags the uncompiled ones as malicious). <a class="ts" href="https://www.youtube.com/watch?v=i-V89uYnCZ4&amp;t=329s">[5:29]</a> <a class="ts" href="https://www.youtube.com/watch?v=i-V89uYnCZ4&amp;t=345s">[5:45]</a>&ndash;<a class="ts" href="https://www.youtube.com/watch?v=i-V89uYnCZ4&amp;t=353s">[5:53]</a></li>
+      <li><strong>Keep a known-good copy of your site and diff it against live.</strong> One diff printed only the file he planted. Store the clean copy where the server can't write to it and run the compare after every deploy. <a class="ts" href="https://www.youtube.com/watch?v=i-V89uYnCZ4&amp;t=306s">[5:06]</a>&ndash;<a class="ts" href="https://www.youtube.com/watch?v=i-V89uYnCZ4&amp;t=315s">[5:15]</a> <a class="ts" href="https://www.youtube.com/watch?v=i-V89uYnCZ4&amp;t=372s">[6:12]</a></li>
+      <li><strong>Put scanning and comparing on a schedule and read every hit the morning after</strong> &mdash; a scanner guesses from patterns; a compare tells you what actually changed. Read the file yourself before panicking. <a class="ts" href="https://www.youtube.com/watch?v=i-V89uYnCZ4&amp;t=357s">[5:57]</a>&ndash;<a class="ts" href="https://www.youtube.com/watch?v=i-V89uYnCZ4&amp;t=371s">[6:11]</a></li>
+    </ul>
+
+    <h2>Check SELinux enforcement on every Linux box you run</h2>
+    <ul>
+      <li><strong>Run <code>getenforce</code> on Linux servers you own; the answer you want is <code>enforcing</code>.</strong> <code>permissive</code> means SELinux logs what it would have blocked but blocks nothing; <code>disabled</code> means no policy protects the machine at all &mdash; the speaker calls permissive/disabled "the first setting to fix." <a class="ts" href="https://www.youtube.com/watch?v=i-V89uYnCZ4&amp;t=378s">[6:18]</a> <a class="ts" href="https://www.youtube.com/watch?v=i-V89uYnCZ4&amp;t=441s">[7:21]</a>&ndash;<a class="ts" href="https://www.youtube.com/watch?v=i-V89uYnCZ4&amp;t=464s">[7:44]</a></li>
+      <li><strong>On Kali, install the <code>selinux-utils</code> package first</strong> &mdash; <code>getenforce</code> isn't shipped by default. <a class="ts" href="https://www.youtube.com/watch?v=i-V89uYnCZ4&amp;t=431s">[7:11]</a>&ndash;<a class="ts" href="https://www.youtube.com/watch?v=i-V89uYnCZ4&amp;t=441s">[7:21]</a></li>
+      <li><strong>Know why it matters:</strong> even root only gets exactly what its policy allows, so a hacked service can't step outside its lane. NSA released it under an open-source license in Dec 2000, it merged into the mainline kernel in Aug 2003, arrived on Android in 4.3, and has run every app in enforcing mode since Android 5. <a class="ts" href="https://www.youtube.com/watch?v=i-V89uYnCZ4&amp;t=390s">[6:30]</a> <a class="ts" href="https://www.youtube.com/watch?v=i-V89uYnCZ4&amp;t=400s">[6:40]</a>&ndash;<a class="ts" href="https://www.youtube.com/watch?v=i-V89uYnCZ4&amp;t=414s">[6:54]</a></li>
+      <li><strong>Watch the failure mode:</strong> SELinux only blocks what policy forbids, and when it gets in the way people often turn it off. <a class="ts" href="https://www.youtube.com/watch?v=i-V89uYnCZ4&amp;t=419s">[6:59]</a>&ndash;<a class="ts" href="https://www.youtube.com/watch?v=i-V89uYnCZ4&amp;t=426s">[7:06]</a></li>
+    </ul>
+
+    <h2>Generate passwords, passphrases, and keys with Rand Pass Generator</h2>
+    <ul>
+      <li><strong>Use the NSA's Rand Pass Generator for the one passphrase that guards your password manager</strong>, and let the manager handle everything else. It draws from a hash-DRBG generator built to a NIST standard and refuses to run if its own self-tests fail. <a class="ts" href="https://www.youtube.com/watch?v=i-V89uYnCZ4&amp;t=168s">[2:48]</a>&ndash;<a class="ts" href="https://www.youtube.com/watch?v=i-V89uYnCZ4&amp;t=185s">[3:05]</a> <a class="ts" href="https://www.youtube.com/watch?v=i-V89uYnCZ4&amp;t=255s">[4:15]</a></li>
+      <li><strong>Build it from source with Java + Ant</strong> (one <code>apt</code> install, then <code>ant jar</code>), and run the jar from the folder you built it in &mdash; running from your home folder fails with "cannot access the jar." <a class="ts" href="https://www.youtube.com/watch?v=i-V89uYnCZ4&amp;t=210s">[3:30]</a>&ndash;<a class="ts" href="https://www.youtube.com/watch?v=i-V89uYnCZ4&amp;t=235s">[3:55]</a></li>
+      <li><strong>Learn the flags: <code>-pw</code> passwords, <code>-pp</code> passphrases, <code>-k</code> keys, <code>-str</code> bits of strength.</strong> His test: 96 bits produced three random 16-character passwords; 128 bits produced two 8-word passphrases. <a class="ts" href="https://www.youtube.com/watch?v=i-V89uYnCZ4&amp;t=237s">[3:57]</a> <a class="ts" href="https://www.youtube.com/watch?v=i-V89uYnCZ4&amp;t=201s">[3:21]</a></li>
+      <li><strong>Don't expect a password manager replacement</strong> &mdash; it's a Java command-line tool with no app and no sync. <a class="ts" href="https://www.youtube.com/watch?v=i-V89uYnCZ4&amp;t=203s">[3:23]</a>&ndash;<a class="ts" href="https://www.youtube.com/watch?v=i-V89uYnCZ4&amp;t=208s">[3:28]</a></li>
+      <li><strong>Context for skepticism:</strong> this is the agency Reuters says paid RSA $10 million to make a suspect RNG the default (RSA denied any deal; NIST told everyone to stop using that generator in 2014) &mdash; but this tool uses a different, still-recommended generator from the same NIST family. <a class="ts" href="https://www.youtube.com/watch?v=i-V89uYnCZ4&amp;t=152s">[2:32]</a>&ndash;<a class="ts" href="https://www.youtube.com/watch?v=i-V89uYnCZ4&amp;t=167s">[2:47]</a></li>
+    </ul>
+
+    <h2>Run Apache NiFi only with its defaults locked on</h2>
+    <ul>
+      <li><strong>Never expose the NiFi canvas</strong> &mdash; an exposed instance lets whoever reaches it build data flows on your machine. Recent versions start with login and an encrypted connection switched on; leave them that way. <a class="ts" href="https://www.youtube.com/watch?v=i-V89uYnCZ4&amp;t=519s">[8:39]</a>&ndash;<a class="ts" href="https://www.youtube.com/watch?v=i-V89uYnCZ4&amp;t=528s">[8:48]</a> <a class="ts" href="https://www.youtube.com/watch?v=i-V89uYnCZ4&amp;t=574s">[9:34]</a></li>
+      <li><strong>Verify the download before unzipping:</strong> Apache publishes a SHA-512 checksum next to the zip &mdash; check it first (the video's download was ~850 MB; exact version not repeated to avoid miscaptioning). <a class="ts" href="https://www.youtube.com/watch?v=i-V89uYnCZ4&amp;t=532s">[8:52]</a>&ndash;<a class="ts" href="https://www.youtube.com/watch?v=i-V89uYnCZ4&amp;t=544s">[9:04]</a></li>
+      <li><strong>Start it with <code>nifi.sh</code> from the <code>bin</code> folder after exporting <code>JAVA_HOME</code></strong>, expect ~2.5 minutes to an HTTP 200 on its web interface, and stop it with the same script so nothing keeps running in the background. <a class="ts" href="https://www.youtube.com/watch?v=i-V89uYnCZ4&amp;t=545s">[9:05]</a>&ndash;<a class="ts" href="https://www.youtube.com/watch?v=i-V89uYnCZ4&amp;t=572s">[9:32]</a></li>
+    </ul>
+
+    <h2>Don't build new crypto on Simon and Speck</h2>
+    <ul>
+      <li><strong>For your own projects use AES or ChaCha20 from an audited library</strong> &mdash; leave Simon and Speck to the tiny chips they were made for. <a class="ts" href="https://www.youtube.com/watch?v=i-V89uYnCZ4&amp;t=691s">[11:31]</a></li>
+      <li><strong>Understand why they're controversial:</strong> experts in Germany, Japan, and Israel fought them because they feared the NSA knew how to break them; a Linux kernel developer wrote a patch to remove them; ISO accepted them only for RFID tags. The NSA answered that 70+ security analysis papers back its conclusion, and the speaker stresses a passing test vector proves the cipher works as published but can't settle the trust question. <a class="ts" href="https://www.youtube.com/watch?v=i-V89uYnCZ4&amp;t=580s">[9:40]</a>&ndash;<a class="ts" href="https://www.youtube.com/watch?v=i-V89uYnCZ4&amp;t=612s">[10:12]</a> <a class="ts" href="https://www.youtube.com/watch?v=i-V89uYnCZ4&amp;t=629s">[10:29]</a></li>
+      <li><strong>Read the spec yourself in under a minute:</strong> clone the Simon/Speck Supercop repo, open the reference stream file in the spec 128 folder &mdash; the encrypt function is ~10 lines in a 32-round loop; the repo also includes Simon 2 and the Jambu authenticated-encryption scheme. <a class="ts" href="https://www.youtube.com/watch?v=i-V89uYnCZ4&amp;t=635s">[10:35]</a>&ndash;<a class="ts" href="https://www.youtube.com/watch?v=i-V89uYnCZ4&amp;t=689s">[11:29]</a></li>
+    </ul>
+
+    <h2>Treat the Enigma Simulator as a history lesson, not a tool</h2>
+    <ul>
+      <li><strong>Don't protect anything modern with anything like Enigma</strong> &mdash; it's been broken for nearly a century. <a class="ts" href="https://www.youtube.com/watch?v=i-V89uYnCZ4&amp;t=146s">[2:26]</a>&ndash;<a class="ts" href="https://www.youtube.com/watch?v=i-V89uYnCZ4&amp;t=151s">[2:31]</a></li>
+      <li><strong>Use the repo to learn the cryptanalysis that beat it:</strong> feed its output back from the same rotor position to see the reciprocal property (and that a real Enigma never encrypts a letter as itself &mdash; the habit codebreakers used to discard wrong guesses by the thousand). The bundled notebook walks through breaking it the way Marian Rejewski did in the 1930s. <a class="ts" href="https://www.youtube.com/watch?v=i-V89uYnCZ4&amp;t=95s">[1:35]</a>&ndash;<a class="ts" href="https://www.youtube.com/watch?v=i-V89uYnCZ4&amp;t=129s">[2:09]</a></li>
+      <li><strong>Try it on any Kali box:</strong> git and Python 3 are already installed &mdash; one <code>git clone</code> and step into the folder. <a class="ts" href="https://www.youtube.com/watch?v=i-V89uYnCZ4&amp;t=134s">[2:14]</a>&ndash;<a class="ts" href="https://www.youtube.com/watch?v=i-V89uYnCZ4&amp;t=145s">[2:25]</a></li>
+    </ul>
+
+    <h2>What the agency actually uses (and one thing to do this week)</h2>
+    <ul>
+      <li><strong>Only two are confirmed in NSA use:</strong> Ghidra's README says the agency applied it to analyzing malicious code, and NiFi ran inside the agency as "Niagara Files" for 8+ years before its Nov 2014 release (top-level Apache project in July 2015; 6,000+ stars) &mdash; the other five it simply built and handed out. <a class="ts" href="https://www.youtube.com/watch?v=i-V89uYnCZ4&amp;t=464s">[7:44]</a>&ndash;<a class="ts" href="https://www.youtube.com/watch?v=i-V89uYnCZ4&amp;t=513s">[8:33]</a> <a class="ts" href="https://www.youtube.com/watch?v=i-V89uYnCZ4&amp;t=849s">[14:09]</a>&ndash;<a class="ts" href="https://www.youtube.com/watch?v=i-V89uYnCZ4&amp;t=863s">[14:23]</a></li>
+      <li><strong>The speaker's suggested starter tasks:</strong> run <code>getenforce</code> on a Linux box you own, or keep a clean copy of your website and compare it with the live one. <a class="ts" href="https://www.youtube.com/watch?v=i-V89uYnCZ4&amp;t=875s">[14:35]</a>&ndash;<a class="ts" href="https://www.youtube.com/watch?v=i-V89uYnCZ4&amp;t=882s">[14:42]</a></li>
+    </ul>
+
+    <div class="notes__dl">
+      <a href="/notes/7-nsa-github-tools-takeaways.md" download>Download Markdown</a>
+      <a href="/notes/7-nsa-github-tools-takeaways.epub" download>Download EPUB (Kindle-ready)</a>
+    </div>
+
+    <p class="notes__foot">
+      Notes generated from the video's auto-generated captions; a few version numbers the
+      transcriber may have misheard were omitted or qualified rather than asserted.
+      Every timestamp links to the corresponding moment in the source video.
+    </p>
+  </main>
+</body>
+</html>
